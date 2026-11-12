@@ -148,7 +148,9 @@ Essas fontes orientam a análise, não comprovam aderência do aplicativo futuro
 - [x] `qa-report`: jornadas, personas, cenários e charters em `docs/qa/`.
 - [x] `qa-execution`: interações nativas, reabertura, evidências e falhas registradas.
 - [x] Codereview configurado para Rust (`.rs`, testes, Cargo e docs), base `develop`.
-- [ ] Todas as notas A sustentadas por revisão; casos não exercitados não recebem Pass.
+- [x] Categorias de revisão avaliadas após correções; veredito do último HEAD na
+  conversa e histórico em `docs/reviews/2026-11-12-codereview.md`. AC08 parcial
+  não recebe Pass de desempenho.
 
 ## Fontes e skills localizadas
 

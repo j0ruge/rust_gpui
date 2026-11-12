@@ -1,6 +1,7 @@
 # Codereview — tarefas Rust + GPUI — 2026-11-12
 
-Estado: `fixes_verified`; revisão independente do delta ainda em andamento.
+Registro das correções verificadas e das rodadas de revisão. O veredito do último
+HEAD é publicado na conversa após revisão independente do respectivo delta.
 Revisão completa de `develop` (`802b129198e3e843b0a05f53ff8b77b7797fe628`)
 até `326adde4606e5dd85ea3df02f6387df68ee9cf21`: seis commits, 53 arquivos,
 +11.312/−110 linhas. Configuração: raiz `.`, extensões `rs,sh`, testes `tests/*.rs`,
@@ -94,3 +95,24 @@ de vulnerabilidades de todas as dependências.
 Revisar apenas as correções a partir de `326adde`, incluindo documentação e testes.
 Uma rodada limpa deve cobrir o último texto alterado; o goal só termina após essa
 verificação. As notas finais e o HEAD coberto serão informados na conversa.
+
+
+## Rodada 2 — delta 326adde → eb17a5a
+
+Revisores gpt-6.1-terra: código, testes novos e demais docs sem novos achados;
+sweep Bucket A limpo. Pré-scan: regex + gitleaks, 26 arquivos/321 linhas novas,
+zero achados e zero erros. Dois LOW adicionais, preservados e corrigidos:
+
+| ID | Local no HEAD eb17a5a | Achado | Correção |
+|---|---|---|---|
+| R09 | docs/stack.md:140 | Custo da revisão adiada ainda descreve aplicação como aguardando revisão | Situar no momento da entrega inicial e apontar ao ciclo posterior. |
+| R10 | docs/superpowers/plans/2026-11-12-tarefas-gpui.md:382 | Resultado e seção de revisão ainda descrevem goal como futuro | Identificar a entrega inicial e registrar o início posterior com link ao histórico. |
+
+Após a documentação dos módulos, novo binário release:
+`01c6d6db8897cbc4ffd3cb8df935677df173ae2eeb9e0247d49de6aeae015059`.
+Hash conferido com `/proc/1782596/exe`. A reabertura após a exclusão mostrou
+uma tarefa concluída, uma pendente e contador global 1/2; SQLite também contém
+apenas IDs 2 e 3. Evidência local `reopened-root-region.png` no mesmo diretório
+de capturas. A captura direta da janela nesta reabertura reteve um frame antigo;
+conferiu-se a região da janela na tela e os dados reais antes de concluir.
+Essa limitação do instrumento não é medição de latência do aplicativo.

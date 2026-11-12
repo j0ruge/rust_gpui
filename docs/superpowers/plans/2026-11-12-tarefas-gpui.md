@@ -354,9 +354,10 @@ mudanças. Não publicar nada como efeito colateral de finalizar uma branch.
 
 ## Revisão posterior após novo clear
 
-Esta fase foi reservada pelo usuário para outra sessão; não iniciar goal agora.
-Na sessão futura, criar goal explícito de revisar/corrigir até todas as categorias
-serem A, mantendo escopo e evidência. Usar `codereview:codereview` do ambiente;
+Na entrega inicial, esta fase havia sido reservada para outra sessão. O usuário
+iniciou o goal em 2026-11-12; achados e evidências estão em
+`docs/reviews/2026-11-12-codereview.md`. O objetivo é revisar/corrigir até todas as
+categorias serem A, mantendo escopo e evidência. Usar `codereview:codereview` do ambiente;
 carregar seus arquivos da mesma versão. O contrato enviado originalmente era
 2.27.16; existe instalação 2.27.37. Conferir roteamento antes de executar scripts.
 
@@ -379,4 +380,5 @@ Código ef5f8ef sobre develop 802b129; documentação final na feature. Janela r
 aberta, 30 testes e gates registrados em docs/stack.md. QA encerrou com 7 cenários
 aprovados e 1 blocked-verify: sem instrumento confiável, a tarefa 6 registrou a
 pendência de temporização permitida pelo plano. AC08 não está integralmente aprovado.
-A revisão com goal não foi executada e continua reservada à próxima sessão.
+Na entrega inicial, a revisão com goal ainda não havia sido executada. O ciclo
+posterior está registrado em `docs/reviews/2026-11-12-codereview.md`.

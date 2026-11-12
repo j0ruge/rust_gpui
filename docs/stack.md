@@ -137,8 +137,9 @@ Não há promessa de FPS/consumo de memória.
 - Instalações rustup concorrentes disputaram clippy.partial. Repetição sequencial
   concluiu. Fetch/build provisório usou stable com o mesmo rustc/commit 1.97.0;
   depois o pin nomeado e cargo run normal foram conferidos.
-- Revisão independente/goal adiada por instrução expressa do usuário, mantendo
-  branch local. Custo: a aplicação ainda aguarda essa revisão; não recebeu notas A.
+- Na entrega inicial, revisão independente/goal foi adiada por instrução expressa
+  do usuário, mantendo a branch local. Naquela fase, a aplicação ainda não tinha
+  notas de revisão. O ciclo posterior está em `reviews/2026-11-12-codereview.md`.
 
 ## Aprendizados e retomada
 
