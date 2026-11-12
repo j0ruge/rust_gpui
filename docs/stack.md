@@ -99,3 +99,13 @@ tabela normalizado, registros validados, DELETE journal/FULL/250ms. Cada ação
 retorna o snapshot só depois do commit; erros fazem rollback e são propagados.
 O banco inválido é preservado; recuperação exige corrigir caminho/permissões ou
 tratar cópia do arquivo externamente. Não há reset ou backup automático.
+
+
+## Incremento 4 — estado resistente a falhas
+
+Nove testes de estado passaram após oito falhas comportamentais observadas.
+Busy recusa reentrada; erro preserva snapshot, draft, edição, confirmação e
+comando para retry. Sucesso limpa apenas o formulário relativo à ação; filtro
+escolhido durante busy permanece. Conclusão só remove linha filtrada após
+commit. Fechamento aguarda resultado ou decisão explícita após falha.
+Esses testes são puros e não alegam testar os widgets GPUI.

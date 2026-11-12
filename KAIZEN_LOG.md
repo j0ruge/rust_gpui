@@ -110,3 +110,10 @@ respectivas; a revisão final com goal ocorre após outro clear, conforme pedido
 - Check: dez testes reais com diretórios temporários; rollback por trigger,
   bytes corrompidos preservados e reabertura após drop. Suíte release verde.
 - Act: padronizar snapshot somente após commit; erro explícito sem reset do banco.
+
+
+## 2026-11-12 — Incremento 4: separar intenção de confirmação
+
+- Plan/Do: estado puro com begin/finish, retry e fechamento adiado.
+- Check: nove cenários RED/GREEN e suíte release com 29 testes verdes.
+- Act: não apagar rascunho de outra ação nem converter erro em lista vazia.

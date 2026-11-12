@@ -239,17 +239,17 @@ testes privados de falha dentro de src/storage.rs.
 **Arquivos:** src/state.rs, src/lib.rs; tests/state.rs.
 **Interfaces:** consome Task/TaskCommand/AppError; produz TaskScreenState.
 
-- [ ] Antes da implementação, testar begin/finish: busy começa ao aceitar ação;
+- [x] Antes da implementação, testar begin/finish: busy começa ao aceitar ação;
   segunda begin retorna None; erro mantém snapshot/draft/edição/confirmação;
   sucesso troca snapshot, limpa somente edição da ação e libera busy.
-- [ ] Testar filtro alterado durante busy permanece; contagem considera todas
+- [x] Testar filtro alterado durante busy permanece; contagem considera todas
   as pendentes; concluir no filtro Pendentes remove linha somente após sucesso.
   Estado de erro não se converte em lista vazia.
-- [ ] Testar close_requested: sucesso permite concluir fechamento; falha exige
+- [x] Testar close_requested: sucesso permite concluir fechamento; falha exige
   decisão retry/sair sem salvar; cancelamento de edição não gera TaskCommand.
-- [ ] `cargo test --locked --test state`: observar falha, implementar transições
+- [x] `cargo test --locked --test state`: observar falha, implementar transições
   puras e repetir até passar. Esses testes não alegam validar widgets GPUI.
-- [ ] Commit do incremento.
+- [x] Commit do incremento.
 
 ## Tarefa 5 — Tela completa integrada ao armazenamento
 
