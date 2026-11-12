@@ -19,24 +19,34 @@ servidor. Prazos, prioridades e projetos ficam fora da primeira versão.
 
 ## Etapa atual e continuidade
 
-- Plano autocontido pronto em
-  `docs/superpowers/plans/2026-11-12-tarefas-gpui.md`, com spec vinculada.
-  Retomada em `EXECUTAR_COM_SOL.md`. Ainda não há aplicação ou build.
-- O usuário fará `/clear` e executará com o Sol. Nesta sessão de planejamento
-  não iniciar scaffolding, instalação de dependências ou código do produto.
-  Na nova sessão, o pedido de executar o plano autoriza avançar pelas tarefas;
-  não reiniciar a entrevista ou pedir novamente escolhas já resolvidas.
-- Plataforma inicial definida pelo planejador: Ubuntu 24.04 x86_64/X11;
-  GPUI + componentes + SQLite, conforme versões e limites da spec.
-- Escrever documentação e as skills solicitadas já está autorizado.
-- Antes do handoff, registrar escopo, decisões, arquivos previstos, dependências,
-  incrementos, comandos de verificação, critérios de aceite e pendências.
-- Após a implementação: `qa-report` planeja as jornadas e `qa-execution` as
-  executa. Depois de outro `/clear`, o usuário iniciará `$goal` com
-  `codereview:codereview` até todas as categorias atingirem A com evidência.
-- Não afirmar troca de modelo, execução de QA ou conclusão de goal sem ter
-  realizado e verificado a ação. Uma revisão somente leitura não autoriza
-  mudanças fora do escopo de correção solicitado.
+- Aplicação implementada em `feat/tarefas-gpui`, a partir de develop
+  `802b129198e3e843b0a05f53ff8b77b7797fe628`. Entrega inicial histórica: ef5f8ef.
+  Repositório público: https://github.com/j0ruge/rust_gpui; origin configurado.
+  PR #1: feat/tarefas-gpui → develop, aberto inicialmente em rascunho.
+  Consultar o PR para o estado remoto de integração.
+  Não repetir scaffolding ou reinstalar por suposição.
+- Execução: `cargo run --locked --release`. README e docs/stack.md descrevem
+  uso, versões, dados, testes, SHAs e limitações. A janela final foi aberta para uso.
+- Plano em docs/superpowers/plans/2026-11-12-tarefas-gpui.md executado;
+  resultado de QA inicial em docs/qa/reports/2026-11-12-full.md. Naquela entrega:
+  trinta testes, fmt,
+  clippy e build; jornadas nativas CRUD, filtros, falhas, reabertura e mil itens.
+- QA encerrou com sete cenários aprovados e uma verificação humana pendente:
+  limite de 1s da AC08 não pôde ser medido com instrumento confiável. Protocolo
+  no relatório; scripts/qa-volume.sh cria fixture nova e isolada. Não declarar
+  AC08 integralmente aprovado nem prometer FPS.
+- Aprendizados verificados incorporados às skills pessoais rust/gpui em seus
+  escopos; exemplos e validação estrutural registrados em docs/stack.md.
+- Goal de codereview iniciado explicitamente pelo usuário em 2026-11-12.
+  Achados originais, correções e evidências em docs/reviews/2026-11-12-codereview.md.
+  Usar base develop e revisar os deltas após o HEAD de cada rodada; incluir
+  documentação e testes, sem apagar achados refutados ou corrigidos.
+- Não afirmar troca de modelo, QA não realizado ou conclusão de goal não executado.
+  Uma revisão somente leitura não autoriza alterações fora da correção solicitada.
+- Correções do parecer independente do Claude após o baseline e5ca7a8:
+  docs/reviews/2026-11-12-claude-pr1.md. Suíte atual: 41 testes Rust e 17
+  jornadas automatizadas em Xvfb. Consultar o relatório para gates, revisão do
+  delta e estado remoto; os checkpoints anteriores são históricos.
 
 ## Convenções
 
@@ -75,6 +85,9 @@ servidor. Prazos, prioridades e projetos ficam fora da primeira versão.
 
 ## Verificação e evidência
 
+- QA automático da janela é **headless por padrão**: `bash scripts/qa-headless.sh`,
+  com Xvfb exclusivo e dados artificiais. Nunca enviar teclado/mouse ao display
+  da sessão do usuário. Teste visível só quando ele pedir explicitamente.
 - Formatação, análise estática, testes, build e uso da janela são evidências
   distintas. Registrar comando, versão/build e resultado, inclusive bloqueios.
 - QA de GPUI usa a janela nativa, teclado e mouse; testes de DOM/navegador não

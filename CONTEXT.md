@@ -1,9 +1,9 @@
 # Contexto — experimento Rust + GPUI
 
-Data: 2026-11-12. Estado: `planned`. Este documento preserva a descoberta.
+Data: 2026-11-12. Estado: `implemented_with_qa_limit`. Este documento preserva decisões e execução.
 Plano: [tarefas GPUI](docs/superpowers/plans/2026-11-12-tarefas-gpui.md).
 Retomada: [EXECUTAR_COM_SOL.md](EXECUTAR_COM_SOL.md).
-Execução reservada à próxima sessão com Sol, após `/clear` do usuário.
+Execução autorizada pelo usuário em 2026-11-12 após leitura do handoff.
 
 ## Glossário
 
@@ -27,7 +27,8 @@ Execução reservada à próxima sessão com Sol, após `/clear` do usuário.
 4. Implementar por incrementos e verificar cada entrega.
 5. Planejar QA com `qa-report`, executar com `qa-execution`, registrar evidência.
 6. Após novo `/clear`, iniciar o goal solicitado de revisão e correção até
-   todas as categorias do codereview serem A. Essa fase ainda não começou.
+   todas as categorias do codereview serem A. Goal iniciado em 2026-11-12;
+   achados e evidências em `docs/reviews/2026-11-12-codereview.md`.
 
 Respostas confirmadas pelo usuário nesta sessão:
 
@@ -54,7 +55,7 @@ Artefatos desse pedido criados: `AGENTS.md`, este `CONTEXT.md`,
 `/home/joruge/.codex/skills/gpui/SKILL.md`. As duas skills passaram no validador
 estrutural; isso não valida o futuro aplicativo.
 
-## Evidências observadas
+## Evidências observadas no planejamento
 
 - A pasta inicialmente continha apenas `Rust e o Editor Zed.md`, sem manifesto,
   código, README ou instruções locais. `git status --short --branch` retornou
@@ -107,8 +108,9 @@ e ambiente serão verificadas na execução, sem fingir que já passaram.
 
 ## Checklist de aderência DDD e Kaizen
 
-Resultado: plano atende aos critérios de desenho DDD/Kaizen abaixo. A aderência
-do código, o funcionamento e os gates de QA/revisão permanecem não executados.
+No planejamento, os critérios abaixo orientaram o desenho DDD/Kaizen. A execução
+e o QA posteriores estão registrados em “Entrega local”; AC08 permanece parcial
+pela medição de até 1s pendente. A revisão atual está em `docs/reviews/2026-11-12-codereview.md`.
 
 ### DDD
 
@@ -118,7 +120,7 @@ do código, o funcionamento e os gates de QA/revisão permanecem não executados
 - [x] Definir uma fronteira de domínio simples para tarefas locais; separar
   domínio, apresentação e armazenamento apenas onde houver responsabilidade.
 - [x] Definir cenários de aceite com termos iguais aos usados na interface.
-- [ ] Conferir linguagem contra implementação e rótulos reais quando existirem.
+- [x] Conferir linguagem contra implementação e rótulos reais quando existirem.
 - [x] Avaliar necessidade real de repositório/abstrações; eventos, CQRS e
   microserviços não são requisitos desta missão.
 
@@ -135,18 +137,20 @@ Essas fontes orientam a análise, não comprovam aderência do aplicativo futuro
 - [x] Escrever incrementos pequenos com Plan/Do/Check/Act e reversão.
 - [x] Prever primeira entrega executável e testes proporcionais aos riscos.
 - [x] Definir prevenção de perda de dados e plano de falhas deliberadas em área isolada.
-- [ ] Executar e comprovar as prevenções e falhas planejadas.
-- [ ] Verificar cada incremento no artefato real; corrigir falhas antes de avançar.
-- [ ] Registrar lições e padronização no `KAIZEN_LOG.md` após cada ciclo concluído.
+- [x] Executar e comprovar as prevenções e falhas planejadas.
+- [x] Verificar cada incremento no artefato real; corrigir falhas antes de avançar.
+- [x] Registrar lições e padronização no `KAIZEN_LOG.md` após cada ciclo concluído.
 
 ### Aceite e revisão futuros
 
 - [x] Plano autocontido e handoff prontos antes de implementar.
-- [ ] Usuário retoma após clear e solicita execução ao Sol.
-- [ ] `qa-report`: jornadas, personas, cenários e charters em `docs/qa/`.
-- [ ] `qa-execution`: interações nativas, reabertura, evidências e falhas registradas.
-- [ ] Codereview configurado para Rust (`.rs`, testes, Cargo e docs), base `develop`.
-- [ ] Todas as notas A sustentadas por revisão; casos não exercitados não recebem Pass.
+- [x] Usuário retoma após clear e solicita execução ao Sol.
+- [x] `qa-report`: jornadas, personas, cenários e charters em `docs/qa/`.
+- [x] `qa-execution`: interações nativas, reabertura, evidências e falhas registradas.
+- [x] Codereview configurado para Rust (`.rs`, testes, Cargo e docs), base `develop`.
+- [x] Categorias de revisão avaliadas após correções; veredito do último HEAD na
+  conversa e histórico em `docs/reviews/2026-11-12-codereview.md`. AC08 parcial
+  não recebe Pass de desempenho.
 
 ## Fontes e skills localizadas
 
@@ -163,3 +167,83 @@ Essas fontes orientam a análise, não comprovam aderência do aplicativo futuro
 - Codereview fornecido pelo usuário: 2.27.16. Há registro local de 2.27.37
   instalado no cache Claude. Resolver a versão aplicável na fase de revisão;
   não misturar contrato de uma versão com scripts de outra.
+
+
+## Execução — incrementos 1 e 2
+
+Janela real do bootstrap validada, incluindo fechamento exit 0. Regras puras e
+resolução de diretório passaram em dez testes após RED comportamental (nove
+falhas, uma recusa já atendida pelo contrato de erro). Rejeição de controles
+ocorre antes de trim para não aceitar tab/quebra nas bordas. Títulos mantêm
+espaços internos; limite usa escalares Unicode. Ver `docs/stack.md`.
+
+
+## Entrega local — 2026-11-12
+
+Código no checkpoint ef5f8ef da feature, base develop 802b129. A janela final
+foi aberta com cargo run --locked --release, sem diretório de QA. Binário
+SHA256 25de9f5f56850fb0135df9b45e3d970c86bdeda508d7c158f9e46cc2fb569869.
+CRUD, filtros, autosave e recuperação implementados. Trinta testes; gate técnico,
+QA e evidências em docs/stack.md e docs/qa/reports/2026-11-12-full.md.
+
+Quatro jornadas percorridas: sete cenários aprovados, um blocked-verify pela
+medição de até 1s inconclusiva. AC08 parcial; não é aprovação de desempenho.
+Dois defeitos de UI encontrados e corrigidos, ambos verified. Naquela entrega, nenhum goal ou
+codereview havia sido iniciado. A revisão posterior está em `docs/reviews/2026-11-12-codereview.md`.
+Skills Rust/GPUI receberam referências verificadas; validação estrutural passou.
+
+Vocabulário implementado: TaskId positivo e estável; TaskTitle validado;
+TaskStatus Pending/Completed (pending/completed no banco); TaskFilter
+All/Pending/Completed; draft é rascunho, snapshot é a última lista confirmada,
+busy é escrita em andamento. A entidade GPUI continua distinta do domínio.
+
+
+## Publicação e revisão externa — 2026-11-12
+
+Por pedido explícito do usuário, repositório público criado em
+https://github.com/j0ruge/rust_gpui. Origin publicado com develop como padrão e
+feat/tarefas-gpui como branch de implementação. PR #1 contra develop, em rascunho:
+https://github.com/j0ruge/rust_gpui/pull/1. Sem merge.
+
+Revisão independente concluída pelo Claude Code 2.1.322 / Claude Opus 5.5
+sobre o HEAD 83f47ca, contra develop. O Ultrareview remoto recusou o tamanho
+do PR; o CLI local fez análise estática com Read/Glob/Grep, sem executar
+comandos, testes, build ou janela, sem delegações e sem alterações no código.
+
+Resultado publicado em
+https://github.com/j0ruge/rust_gpui/pull/1#issuecomment-6835369884:
+um achado médio e sete baixos. O principal envolve foco após desaparecer a
+última tarefa visível; os cenários nativos indicados precisam de reprodução.
+Achados não foram corrigidos nesta solicitação de revisão. O PR segue em
+rascunho, sem merge; AC08 continua parcial. Relatório bruto local ignorado em
+`.superpowers/review/2026-11-12/claude-review-result.json`.
+Na publicação inicial, as alterações posteriores ao HEAD revisado apenas
+registravam este resultado.
+
+## Tratamento dos achados do Claude — 2026-11-12
+
+Por pedido do usuário, os oito achados foram verificados e tratados, com
+evidências em [correções do PR #1](docs/reviews/2026-11-12-claude-pr1.md).
+O baseline e5ca7a8 tinha 33 testes; as correções passaram em 40 testes Rust e
+15 jornadas nativas em Xvfb exclusivo. Controles de seleção e retry usam o
+adaptador real; guards de busy/finish têm regressões de estado. Sabotagens em
+cópias comprovaram os sensores sem alterar o fonte ou executável do produto.
+
+Preferência explícita: QA automático headless para não disputar teclado/mouse
+com o desktop em uso. `scripts/qa-headless.sh` implementa esse isolamento;
+janela visível só quando solicitada. AC08 continua parcial. O merge foi
+autorizado condicionalmente à resolução/verificação; gates finais, revisão do
+delta e estado de integração devem ser consultados no relatório e no PR.
+
+Na revisão corretiva de a3313e7, o Claude apontou um caso de retry inválido
+dentro da decisão de saída, a identidade da cópia testada e duas observações
+sobre evidências/sensores. O caso de saída foi reproduzido e corrigido no
+adaptador GPUI; hash agora identifica a cópia executada. A suíte evoluiu para
+41 testes Rust e 16 jornadas; histórico dos controles e drivers distinguido
+do build final. O relatório mantém as observações e respectivas respostas.
+
+A revisão de 7803066 validou F1–F4, mas identificou que encerrar no retry de
+um título longo descartava o rascunho. A transição final cancela a intenção
+de fechar ao validar um título inválido e devolve foco ao campo. A suíte
+mantém 41 testes e agora tem 17 jornadas; vazio/longo voltam ao formulário e
+podem ser corrigidos/salvos. O usuário continua decidindo se quer fechar.
