@@ -177,3 +177,13 @@ respectivas; a revisão final com goal ocorre após outro clear, conforme pedido
   PR em rascunho conferidos nas respostas do GitHub.
 - Act: registrar contexto e limites de QA na descrição da revisão; manter o
   PR sem merge. Solicitação ao Claude Code não é aprovação nem resultado de revisão.
+
+
+### Retorno da revisão independente
+
+- Claude Code 2.1.322 / Claude Opus 5.5 concluiu revisão estática do HEAD 83f47ca.
+  Apenas Read/Glob/Grep; zero alterações, comandos executados ou subagentes.
+- Ultrareview remoto recusou 54 arquivos/11.786 linhas; o CLI local concluiu e
+  o relatório foi publicado no comentário 6835369884 do PR #1.
+- Um achado médio e sete baixos; foco/teclado dependem de reprodução nativa.
+  Achados preservados para triagem, sem correções automáticas ou merge.
