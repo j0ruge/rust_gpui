@@ -74,3 +74,11 @@ x11/client.rs:1388, stack em close-backtrace.log. Isso não generaliza a outros 
 O Cargo informa incompatibilidade futura upstream de `proc-macro-error2 2.0.1`
 (reexport privado de proc_macro, rust-lang/rust#127909). É aviso transitivo;
 não impede o build da toolchain fixada. Não foi aplicado patch amplo.
+
+
+## Incremento 2 — regras e diretório
+
+`cargo test --locked --release --test domain --test config`: dez testes passaram.
+RED: seis falhas no domínio e três na resolução, antes das regras. Testes usam
+argumentos, sem modificar HOME/XDG globais. Perfil release reutiliza o build
+inicial; o gate final também executará o comando padrão do plano.

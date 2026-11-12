@@ -188,7 +188,7 @@ sudo apt-get install --no-install-recommends \
 tests/domain.rs, tests/config.rs.
 **Interfaces:** produz os tipos/assinaturas de domínio e resolve_data_dir acima.
 
-- [ ] Escrever testes de título antes da implementação. Asserções centrais:
+- [x] Escrever testes de título antes da implementação. Asserções centrais:
 
 ```rust
 assert_eq!(TaskTitle::parse("  Comprar café ☕  ").unwrap().as_str(), "Comprar café ☕");
@@ -200,14 +200,14 @@ assert!(TaskTitle::parse(&"é".repeat(201)).is_err());
 
   Acrescentar tab/controle, espaços internos, ID zero/negativo, rename mantém ID,
   set_status idempotente e filtros exatos. Testes em diretório sem dados do usuário.
-- [ ] Testar caminhos por argumentos: override absoluto prevalece; override
+- [x] Testar caminhos por argumentos: override absoluto prevalece; override
   relativo falha; XDG relativo/vazio é ignorado; fallback HOME absoluto/não vazio;
   HOME inválido sem alternativa e ausência total
   falha. Não mudar HOME/XDG globais da suíte.
-- [ ] Rodar `cargo test --locked --test domain --test config`; observar falha pela
+- [x] Rodar `cargo test --locked --test domain --test config`; observar falha pela
   regra ausente, distinguindo-a de erros de ambiente/dependência. Implementar o
   mínimo e repetir até passar. Nenhum teste deve apenas espelhar getters.
-- [ ] Atualizar termos no CONTEXT, sem expandir escopo; commit com motivo.
+- [x] Atualizar termos no CONTEXT, sem expandir escopo; commit com motivo.
 
 ## Tarefa 3 — SQLite, lock e operações duráveis
 

@@ -1,9 +1,9 @@
 # Contexto — experimento Rust + GPUI
 
-Data: 2026-11-12. Estado: `planned`. Este documento preserva a descoberta.
+Data: 2026-11-12. Estado: `in_progress`. Este documento preserva decisões e execução.
 Plano: [tarefas GPUI](docs/superpowers/plans/2026-11-12-tarefas-gpui.md).
 Retomada: [EXECUTAR_COM_SOL.md](EXECUTAR_COM_SOL.md).
-Execução reservada à próxima sessão com Sol, após `/clear` do usuário.
+Execução autorizada pelo usuário em 2026-11-12 após leitura do handoff.
 
 ## Glossário
 
@@ -163,3 +163,12 @@ Essas fontes orientam a análise, não comprovam aderência do aplicativo futuro
 - Codereview fornecido pelo usuário: 2.27.16. Há registro local de 2.27.37
   instalado no cache Claude. Resolver a versão aplicável na fase de revisão;
   não misturar contrato de uma versão com scripts de outra.
+
+
+## Execução — incrementos 1 e 2
+
+Janela real do bootstrap validada, incluindo fechamento exit 0. Regras puras e
+resolução de diretório passaram em dez testes após RED comportamental (nove
+falhas, uma recusa já atendida pelo contrato de erro). Rejeição de controles
+ocorre antes de trim para não aceitar tab/quebra nas bordas. Títulos mantêm
+espaços internos; limite usa escalares Unicode. Ver `docs/stack.md`.

@@ -95,3 +95,10 @@ respectivas; a revisão final com goal ocorre após outro clear, conforme pedido
 - Check: build release, captura da janela e SHA256 comparado ao processo; fechamento exit 0.
 - Act: resolução libc 0.2.189 para xattr legado; encerramento assíncrono evita reentrada X11.
 - Evidências e limites em `docs/stack.md`; QA funcional ainda não executado.
+
+
+## 2026-11-12 — Incremento 2: regras independentes da janela
+
+- Plan/Do: tipos de valor e filtros, resolver caminhos por argumentos.
+- Check: RED comportamental seguido de dez testes verdes em release.
+- Act: regras e mapeamento pt-BR/inglês preservados sem camadas adicionais.
