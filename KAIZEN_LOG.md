@@ -205,3 +205,16 @@ respectivas; a revisão final com goal ocorre após outro clear, conforme pedido
 - Poka-yoke: o driver recusa desktop real, usa fixtures novas e fixa o binário.
   Nesta retomada os mutantes receberam target próprio e o hash do produto
   foi conferido antes/depois; não confiar em build fresh para restaurar alias.
+
+### Revisão corretiva de a3313e7
+
+- O Claude encontrou retry inválido no diálogo de saída, hash calculado sobre
+  alias e duas observações de rastreabilidade/força dos sensores.
+- Caso de saída reproduzido antes do fix; finalizar o fechamento quando a
+  validação já liberou a saída. Teste de estado para essa ordem de eventos.
+- Probe determinístico troca o alias após copiar: RED antes de corrigir o
+  hash, GREEN com a cópia como fonte e RED ao sabotar o cálculo em cópia.
+- Enter sobre seleção oculta agora verifica registros após um commit de
+  controle; mutante só desse caminho detectado. Asserts de retry mostram os
+  títulos em falha. Campanhas antigas mantidas com suas versões e limites.
+- Gates e revisão do novo delta no relatório; AC08 continua parcial.

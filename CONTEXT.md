@@ -234,3 +234,10 @@ com o desktop em uso. `scripts/qa-headless.sh` implementa esse isolamento;
 janela visível só quando solicitada. AC08 continua parcial. O merge foi
 autorizado condicionalmente à resolução/verificação; gates finais, revisão do
 delta e estado de integração devem ser consultados no relatório e no PR.
+
+Na revisão corretiva de a3313e7, o Claude apontou um caso de retry inválido
+dentro da decisão de saída, a identidade da cópia testada e duas observações
+sobre evidências/sensores. O caso de saída foi reproduzido e corrigido no
+adaptador GPUI; hash agora identifica a cópia executada. A suíte evoluiu para
+41 testes Rust e 16 jornadas; histórico dos controles e drivers distinguido
+do build final. O relatório mantém as observações e respectivas respostas.

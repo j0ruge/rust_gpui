@@ -44,7 +44,7 @@ servidor. Prazos, prioridades e projetos ficam fora da primeira versão.
 - Não afirmar troca de modelo, QA não realizado ou conclusão de goal não executado.
   Uma revisão somente leitura não autoriza alterações fora da correção solicitada.
 - Correções do parecer independente do Claude após o baseline e5ca7a8:
-  docs/reviews/2026-11-12-claude-pr1.md. Suíte atual: 40 testes Rust e 15
+  docs/reviews/2026-11-12-claude-pr1.md. Suíte atual: 41 testes Rust e 16
   jornadas automatizadas em Xvfb. Consultar o relatório para gates, revisão do
   delta e estado remoto; os checkpoints anteriores são históricos.
 

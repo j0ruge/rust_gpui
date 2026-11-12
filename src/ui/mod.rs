@@ -207,6 +207,9 @@ impl TaskScreen {
         let focus_before_write = window.focused(cx);
         let focus_was_in_list = self.list_focus.contains_focused(window, cx);
         let Some(command) = self.state.begin(command) else {
+            if self.state.can_close() {
+                schedule_quit(cx);
+            }
             cx.notify();
             return;
         };

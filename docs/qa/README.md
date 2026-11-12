@@ -40,9 +40,10 @@ Dependências de QA: `xvfb`, `xauth`, `openbox`, `xdotool`, `wmctrl`,
 `mesa-vulkan-drivers`. Confira a disponibilidade antes de instalar. Um ICD de
 software em outro local pode ser indicado por `RUST_GPUI_QA_ICD_FILE`.
 
-As 15 jornadas cobrem foco após concluir/reabrir/excluir, fechamento repetido,
+As 16 jornadas cobrem foco após concluir/reabrir/excluir, fechamento repetido,
 erros iniciais, segunda instância, validação, seleção oculta e retry de
-criação/edição com o rascunho atualizado. Fixtures SQLite, cópia do binário,
+criação/edição com o rascunho atualizado, além de retry inválido no fechamento.
+Fixtures SQLite, cópia do binário,
 SHA256, capturas, logs e `report.json` ficam num diretório novo em `/tmp`.
 O relatório exige resultado para cada jornada selecionada e exit 1 em falhas.
 

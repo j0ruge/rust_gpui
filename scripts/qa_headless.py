@@ -27,7 +27,7 @@ CASES = (
     "focus_list", "focus_delete_button", "focus_checkbox", "focus_repeated_close",
     "focus_delete_last", "focus_reopen", "initial_invalid", "invalid_directory_retry", "initial_corrupt",
     "initial_locked_retry", "initial_second_instance", "invalid_title",
-    "retry_create", "retry_rename", "hidden_selection",
+    "retry_create", "retry_rename", "hidden_selection", "retry_invalid_close",
 )
 
 
@@ -219,6 +219,19 @@ class NativeQa:
                 records = [("Primeira pendente", "pending"), ("Outra pendente", "pending"), TASKS[1]]
             self.seed(directory, records)
             app = self.launch(directory, name)
+            if name == "retry_invalid_close":
+                block = sqlite3.connect(directory / "tasks.sqlite3")
+                block.execute("BEGIN IMMEDIATE")
+                self.type(app, "Antes")
+                self.keys(app, "Return")
+                self.wait_text(app, "tentar novamente")
+                assert len(self.rows(app)) == 2, "A escrita bloqueada alterou o snapshot"
+                self.keys(app, "ctrl+a", "BackSpace", "ctrl+q")
+                assert self.dialog(app), "O fechamento não pediu decisão sobre a falha real"
+                self.keys(app, "Return")
+                assert app["process"].wait(timeout=5) == 0
+                assert len(self.rows(app)) == 2, "Retry inválido alterou o banco"
+                return
             if name == "invalid_title":
                 self.keys(app, "Return")
                 text = self.wait_text(app, "informe um titulo")
@@ -246,7 +259,7 @@ class NativeQa:
                 self.keys(app, *(["Tab"] * tabs), "Return")
                 self.saved(app)
                 titles = [row[1] for row in self.rows(app)]
-                assert "Depois" in titles and "Antes" not in titles
+                assert "Depois" in titles and "Antes" not in titles, f"Retry não usou o rascunho atual: {titles!r}"
                 confirmed = self.rows(app)
                 self.close(app)
                 reopened = self.launch(directory, name + "-reopened")
@@ -259,13 +272,15 @@ class NativeQa:
                 self.focus_list(app)
                 self.keys(app, "Home", "space")
                 self.saved(app)
+                confirmed = self.rows(app)
                 self.keys(app, "Delete")
                 assert not self.dialog(app), "Exclusão abriu para seleção oculta"
                 self.keys(app, "Return")
+                self.wait_text(app, "nova tarefa")
                 self.type(app, "8888888")
                 self.keys(app, "Return")
-                assert self.rows(app)[0] == (1, "Primeira pendente", "completed")
                 self.marker(app)
+                assert self.rows(app)[:len(confirmed)] == confirmed, "Enter alterou uma seleção oculta"
                 self.close(app)
                 return
 
@@ -341,7 +356,7 @@ def main():
     shutil.copyfile(binary, pinned_binary)
     pinned_binary.chmod(0o700)
     chosen = arguments.case or list(CASES)
-    report = {"binary": str(binary), "sha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
+    report = {"binary": str(binary), "sha256": hashlib.sha256(pinned_binary.read_bytes()).hexdigest(),
               "display": os.environ["DISPLAY"], "xvfb_pid": server_pid, "cases": []}
     with (output / "openbox.log").open("w") as log:
         manager = subprocess.Popen(["openbox", "--sm-disable"], stdout=log, stderr=subprocess.STDOUT)
