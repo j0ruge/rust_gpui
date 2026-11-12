@@ -1,5 +1,8 @@
 # Tarefas
 
+[Repositório público](https://github.com/j0ruge/rust_gpui) ·
+[PR de revisão](https://github.com/j0ruge/rust_gpui/pull/1) · base `develop`.
+
 Aplicação desktop de tarefas locais em Rust + GPUI para Ubuntu 24.04 x86_64/X11.
 Crie, edite, conclua/reabra e exclua tarefas. Filtros Todas/Pendentes/Concluídas.
 Sem conta, servidor, prazos, prioridades ou projetos.

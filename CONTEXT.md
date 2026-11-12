@@ -196,3 +196,15 @@ Vocabulário implementado: TaskId positivo e estável; TaskTitle validado;
 TaskStatus Pending/Completed (pending/completed no banco); TaskFilter
 All/Pending/Completed; draft é rascunho, snapshot é a última lista confirmada,
 busy é escrita em andamento. A entidade GPUI continua distinta do domínio.
+
+
+## Publicação e revisão externa — 2026-11-12
+
+Por pedido explícito do usuário, repositório público criado em
+https://github.com/j0ruge/rust_gpui. Origin publicado com develop como padrão e
+feat/tarefas-gpui como branch de implementação. PR #1 contra develop, em rascunho:
+https://github.com/j0ruge/rust_gpui/pull/1. Sem merge.
+
+Pedido de revisão independente ao Claude Code registrado na descrição do PR,
+com escopo somente leitura e AC08 parcial explícita. Resultado da execução
+remota deve ser conferido no PR; o pedido não equivale a uma revisão concluída.

@@ -166,3 +166,14 @@ respectivas; a revisão final com goal ocorre após outro clear, conforme pedido
   e pela janela; não gerou alteração funcional. AC08 continua parcial.
 - Decisões deste produto ficam no relatório/CONTEXT; não alterar skills pessoais
   durante a revisão. O gate independente do último delta encerra o goal.
+
+
+## 2026-11-12 — Publicar para permitir revisão independente
+
+- Plan/Do: pedido explícito de repositório público e revisão do Claude Code;
+  criar j0ruge/rust_gpui, publicar develop/feature e abrir PR #1 contra develop.
+- Check: 33 testes passaram novamente antes da publicação; gitleaks examinou
+  os nove commits locais e não encontrou credenciais. Repositório público e
+  PR em rascunho conferidos nas respostas do GitHub.
+- Act: registrar contexto e limites de QA na descrição da revisão; manter o
+  PR sem merge. Solicitação ao Claude Code não é aprovação nem resultado de revisão.

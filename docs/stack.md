@@ -8,7 +8,9 @@ correções estão em [codereview](reviews/2026-11-12-codereview.md).
 ## Código e Git
 
 - Base develop: `802b129198e3e843b0a05f53ff8b77b7797fe628`.
-- Branch: `feat/tarefas-gpui`; sem remoto, push, PR ou merge.
+- Branch: `feat/tarefas-gpui`; publicada posteriormente em
+  [j0ruge/rust_gpui](https://github.com/j0ruge/rust_gpui), com `develop` como padrão.
+  [PR #1](https://github.com/j0ruge/rust_gpui/pull/1) em rascunho, sem merge.
 - Bootstrap: `19de704`; domínio/config: `b920071`; SQLite: `40f2480`;
   estado: `98f1898`; interface e correções de QA: `ef5f8ef04e5d0015ec23f49aa5c3f1f81f40c7a2`.
 - Revisão futura: comparar develop com HEAD da feature, incluindo docs do commit

@@ -21,7 +21,9 @@ servidor. Prazos, prioridades e projetos ficam fora da primeira versão.
 
 - Aplicação implementada em `feat/tarefas-gpui`, a partir de develop
   `802b129198e3e843b0a05f53ff8b77b7797fe628`. Checkpoint do código: ef5f8ef.
-  Não há remoto/push/PR/merge. Não repetir scaffolding ou reinstalar por suposição.
+  Repositório público: https://github.com/j0ruge/rust_gpui; origin configurado.
+  PR #1: feat/tarefas-gpui → develop, em rascunho, sem merge.
+  Não repetir scaffolding ou reinstalar por suposição.
 - Execução: `cargo run --locked --release`. README e docs/stack.md descrevem
   uso, versões, dados, testes, SHAs e limitações. A janela final foi aberta para uso.
 - Plano em docs/superpowers/plans/2026-11-12-tarefas-gpui.md executado;
