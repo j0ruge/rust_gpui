@@ -1,0 +1,9 @@
+/target/
+.env
+.env.*
+!.env.example
+*.sqlite3*
+app.lock
+docs/qa/evidence/
+docs/qa/state.csv
+/.superpowers/
