@@ -239,31 +239,37 @@ fn invalid_titles_never_start_a_write_or_require_a_save_decision_on_close() {
 }
 
 #[test]
-fn invalid_retry_after_a_failed_write_releases_an_already_requested_close() {
-    for editing in [false, true] {
-        let original = task(TaskStatus::Pending);
-        let mut state = TaskScreenState::new(vec![original.clone()]);
-        state.draft = "Antes".into();
-        let command = if editing {
-            state.editing = Some(original.id());
-            TaskCommand::Rename(original.id(), state.draft.clone())
-        } else {
-            TaskCommand::Create(state.draft.clone())
-        };
-        state.begin(command);
-        state.finish(Err(AppError::StorageUnavailable));
-        state.update_draft(String::new());
-        assert!(!state.request_close());
-        let retry = if editing {
-            TaskCommand::Rename(original.id(), state.draft.clone())
-        } else {
-            TaskCommand::Create(state.draft.clone())
-        };
-        assert_eq!(state.begin(retry), None);
-        assert!(state.can_close());
-        assert!(!state.busy);
-        assert!(state.pending_command.is_none());
-        assert!(matches!(state.error, Some(AppError::Validation(_))));
-        assert_eq!(state.tasks, vec![original]);
+fn invalid_retry_cancels_the_close_intent_and_preserves_the_draft_for_correction() {
+    for raw in [String::new(), "9".repeat(201), "Texto\ncolado".into()] {
+        for editing in [false, true] {
+            let original = task(TaskStatus::Pending);
+            let mut state = TaskScreenState::new(vec![original.clone()]);
+            state.draft = "Antes".into();
+            let command = if editing {
+                state.editing = Some(original.id());
+                TaskCommand::Rename(original.id(), state.draft.clone())
+            } else {
+                TaskCommand::Create(state.draft.clone())
+            };
+            state.begin(command);
+            state.finish(Err(AppError::StorageUnavailable));
+            state.update_draft(raw.clone());
+            assert!(!state.request_close());
+            let retry = if editing {
+                TaskCommand::Rename(original.id(), state.draft.clone())
+            } else {
+                TaskCommand::Create(state.draft.clone())
+            };
+            assert_eq!(state.begin(retry), None);
+            assert!(!state.close_requested);
+            assert!(!state.can_close());
+            assert!(!state.busy);
+            assert!(state.pending_command.is_none());
+            assert!(matches!(state.error, Some(AppError::Validation(_))));
+            assert_eq!(state.draft, raw);
+            assert_eq!(state.editing, editing.then_some(original.id()));
+            assert_eq!(state.tasks, vec![original]);
+            assert!(state.request_close());
+        }
     }
 }

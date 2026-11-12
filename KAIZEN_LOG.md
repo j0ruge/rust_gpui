@@ -218,3 +218,16 @@ respectivas; a revisão final com goal ocorre após outro clear, conforme pedido
   controle; mutante só desse caminho detectado. Asserts de retry mostram os
   títulos em falha. Campanhas antigas mantidas com suas versões e limites.
 - Gates e revisão do novo delta no relatório; AC08 continua parcial.
+
+### Corrigir a transição de validação no fechamento
+
+- A revisão de 7803066 validou F1–F4 e apontou descarte do rascunho longo ao
+  escolher retry. Parar de ajustar o encerramento por sintoma: faltava separar
+  intenção de fechar de título válido para salvar. A distinção já existe em
+  AppError::Validation; não exige outra camada ou novo estado de domínio.
+- begin cancela close_requested na validação; o adaptador devolve foco ao
+  formulário. Rascunhos vazio, 201 caracteres e controle são preservados e uma
+  nova decisão de fechar continua disponível. Teste Rust RED antes do fix.
+- Duas jornadas nativas reproduziram o encerramento antes; depois corrigem o
+  rascunho e salvam. Sabotagens isoladas da transição e do foco comprovam os
+  sensores. Resultado final e revisão do delta no relatório.

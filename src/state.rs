@@ -51,6 +51,8 @@ impl TaskScreenState {
             self.saved = false;
             self.error = Some(error.into());
             self.pending_command = None;
+            // Validação pede correção do rascunho, não confirma intenção de sair sem salvar.
+            self.close_requested = false;
             return None;
         }
         self.busy = true;

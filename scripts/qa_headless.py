@@ -27,7 +27,7 @@ CASES = (
     "focus_list", "focus_delete_button", "focus_checkbox", "focus_repeated_close",
     "focus_delete_last", "focus_reopen", "initial_invalid", "invalid_directory_retry", "initial_corrupt",
     "initial_locked_retry", "initial_second_instance", "invalid_title",
-    "retry_create", "retry_rename", "hidden_selection", "retry_invalid_close",
+    "retry_create", "retry_rename", "hidden_selection", "retry_invalid_close", "retry_invalid_long",
 )
 
 
@@ -219,18 +219,32 @@ class NativeQa:
                 records = [("Primeira pendente", "pending"), ("Outra pendente", "pending"), TASKS[1]]
             self.seed(directory, records)
             app = self.launch(directory, name)
-            if name == "retry_invalid_close":
+            if name in ("retry_invalid_close", "retry_invalid_long"):
                 block = sqlite3.connect(directory / "tasks.sqlite3")
                 block.execute("BEGIN IMMEDIATE")
                 self.type(app, "Antes")
                 self.keys(app, "Return")
                 self.wait_text(app, "tentar novamente")
                 assert len(self.rows(app)) == 2, "A escrita bloqueada alterou o snapshot"
-                self.keys(app, "ctrl+a", "BackSpace", "ctrl+q")
+                self.keys(app, "ctrl+a", "BackSpace")
+                if name == "retry_invalid_long":
+                    self.type(app, "9" * 201)
+                self.keys(app, "ctrl+q")
                 assert self.dialog(app), "O fechamento não pediu decisão sobre a falha real"
                 self.keys(app, "Return")
-                assert app["process"].wait(timeout=5) == 0
+                assert app["process"].poll() is None, "Retry inválido encerrou o aplicativo"
+                self.wait_text(app, "200 caracteres" if name == "retry_invalid_long" else "informe um titulo")
+                assert not self.dialog(app), "A validação manteve o diálogo de fechamento"
                 assert len(self.rows(app)) == 2, "Retry inválido alterou o banco"
+                self.keys(app, "ctrl+a")
+                self.type(app, "Corrigida")
+                block.rollback()
+                block.close()
+                block = None
+                self.keys(app, "Return")
+                self.saved(app)
+                assert "Corrigida" in [row[1] for row in self.rows(app)], "O formulário não recuperou o foco"
+                self.close(app)
                 return
             if name == "invalid_title":
                 self.keys(app, "Return")

@@ -168,12 +168,14 @@ revisão do último delta. Não repetir scaffolding ou apagar banco.
 O checkpoint ef5f8ef e os 30 testes acima descrevem a entrega inicial. Após
 o baseline e5ca7a8 (33 testes), a suíte passou a 40 no commit a3313e7 e a
 41 após a revisão corretiva: 1 rollback interno, 4 config, 7 domínio,
-14 persistência e 15 estado. As 16 jornadas de
+14 persistência e 15 estado. As 17 jornadas de
 `bash scripts/qa-headless.sh` usam Xvfb exclusivo com lavapipe; foco,
 validação, seleção e recuperação são exercitados na janela GPUI real.
 O loader do processo identifica llvmpipe, sem inferência a partir do inventário.
 O hash do relatório é calculado sobre a cópia efetivamente executada; um probe
 que troca o alias original após a cópia confirmou a identidade do artefato.
+Retry inválido durante o fechamento cancela a intenção de sair e preserva o
+rascunho no formulário; vazio e 201 caracteres têm jornadas próprias.
 
 O [relatório desta rodada](reviews/2026-11-12-claude-pr1.md) preserva as oito
 justificativas, baseline, sabotagens, gates e revisão do delta. Dependências

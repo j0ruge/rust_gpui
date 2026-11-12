@@ -241,3 +241,9 @@ sobre evidências/sensores. O caso de saída foi reproduzido e corrigido no
 adaptador GPUI; hash agora identifica a cópia executada. A suíte evoluiu para
 41 testes Rust e 16 jornadas; histórico dos controles e drivers distinguido
 do build final. O relatório mantém as observações e respectivas respostas.
+
+A revisão de 7803066 validou F1–F4, mas identificou que encerrar no retry de
+um título longo descartava o rascunho. A transição final cancela a intenção
+de fechar ao validar um título inválido e devolve foco ao campo. A suíte
+mantém 41 testes e agora tem 17 jornadas; vazio/longo voltam ao formulário e
+podem ser corrigidos/salvos. O usuário continua decidindo se quer fechar.
