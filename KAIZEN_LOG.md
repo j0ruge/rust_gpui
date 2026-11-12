@@ -86,3 +86,12 @@ respectivas; a revisão final com goal ocorre após outro clear, conforme pedido
 - Sem transformar as escolhas do MVP em regras globais das skills.
 - Sem scaffolding, instalação ou benchmarks antes do plano.
 - Sem inventar resultados de testes a partir da disponibilidade das ferramentas.
+
+
+## 2026-11-12 — Incremento 1: primeira janela e fechamento verificáveis
+
+- Plan: bootstrap com versões exatas e janela real antes de CRUD.
+- Do: baseline develop, branch feature, Cargo/lock/toolchain, Root/assets e script de dependências.
+- Check: build release, captura da janela e SHA256 comparado ao processo; fechamento exit 0.
+- Act: resolução libc 0.2.189 para xattr legado; encerramento assíncrono evita reentrada X11.
+- Evidências e limites em `docs/stack.md`; QA funcional ainda não executado.

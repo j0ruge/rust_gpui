@@ -17,7 +17,7 @@ rusqlite 0.42.0 bundled; thiserror 2.0.21; tempfile 3.27.0 para testes.
 
 **Spec:** [desenho completo](../specs/2026-11-12-tarefas-gpui-design.md).
 **Diretório:** `/home/joruge/repos/rust_gpui`.
-**Estado:** `planned`; nenhuma tarefa de implementação executada.
+**Estado:** `in_progress`; incremento 1 comprovado; demais acompanhados em docs/stack.md.
 
 ## Restrições globais
 
@@ -146,15 +146,15 @@ durante `await`, renderização ou atualização de Entity.
 src/ui/mod.rs, README e docs/stack.md.
 **Interfaces:** produz janela GPUI com Root/assets; sem depender do CRUD.
 
-- [ ] Releia AGENTS, CONTEXT e spec. Revalide se ainda não há Git/projeto; preserve
+- [x] Releia AGENTS, CONTEXT e spec. Revalide se ainda não há Git/projeto; preserve
   qualquer alteração posterior. Não sobrescrever arquivos existentes com init.
-- [ ] Se continuar sem Git, `git init -b develop`. Criar .gitignore para `/target/`,
+- [x] Se continuar sem Git, `git init -b develop`. Criar .gitignore para `/target/`,
   `.env`, `.env.*` (permitir `.env.example` se surgir sem valores), `*.sqlite3*`,
   `app.lock`, `docs/qa/evidence/`, `docs/qa/state.csv`. Não criar `.env` desnecessário.
-- [ ] Criar commit de baseline com docs e gitignore, mensagem em português;
+- [x] Criar commit de baseline com docs e gitignore, mensagem em português;
   gravar o SHA em docs/stack.md no commit seguinte. Criar `feat/tarefas-gpui`
   a partir desse develop. Se já existir Git, respeitar estado e base reais.
-- [ ] Verificar pacotes com `dpkg-query` e PATH. Na execução autorizada, instalar
+- [x] Verificar pacotes com `dpkg-query` e PATH. Na execução autorizada, instalar
   os ausentes desta base inicial, ajustando por evidência do build:
 
 ```bash
@@ -169,18 +169,18 @@ sudo apt-get install --no-install-recommends \
   pacote só entram se o grafo/build desta aplicação exigir. Registrar inclusão
   e motivo. Se sudo não estiver disponível ou exigir credencial humana, informar
   o comando pendente; não contornar nem marcar ambiente como pronto.
-- [ ] Iniciar pacote no diretório atual: `cargo init --bin --name rust_gpui --vcs none .`.
+- [x] Iniciar pacote no diretório atual: `cargo init --bin --name rust_gpui --vcs none .`.
   Fixar Rust 1.97.0 em rust-toolchain.toml, edition 2024, dependências exatas da
   spec e componentes rustfmt/clippy. Não adicionar todos os features.
-- [ ] Gerar lock com `cargo generate-lockfile`; `cargo fetch --locked`; inspecionar
+- [x] Gerar lock com `cargo generate-lockfile`; `cargo fetch --locked`; inspecionar
   `cargo tree -i gpui` e confirmar que UI/componentes usam uma versão compatível.
-- [ ] Implementar bootstrap com `Application::new().with_assets(...)`, init dos
+- [x] Implementar bootstrap com `Application::new().with_assets(...)`, init dos
   componentes e Root. Abrir janela da spec mostrando título e texto “Preparando
   tarefas…”. Tratar erro de abertura; sem unwrap de erro operacional.
-- [ ] `cargo build --locked --release` e `cargo run --locked --release`: confirmar
+- [x] `cargo build --locked --release` e `cargo run --locked --release`: confirmar
   janela visível e fechamento sem processo órfão. Capturar somente a janela.
   Essa é a primeira entrega verificável, não aceite de CRUD.
-- [ ] Registrar comandos, versão, dependências reais e evidência; commit pequeno.
+- [x] Registrar comandos, versão, dependências reais e evidência; commit pequeno.
 
 ## Tarefa 2 — Regras das tarefas e caminho dos dados
 
