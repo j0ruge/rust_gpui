@@ -1,44 +1,50 @@
-# Retomada com Sol
+# Retomada — aplicação implementada
 
-O planejamento está pronto. O usuário quer a aplicação funcionando primeiro e
-estudará Rust depois. Esta fase não criou código, Git ou dependências instaladas.
+O plano foi executado na sessão de 2026-11-12. Aplicação Rust + GPUI com CRUD,
+filtros e SQLite local funcionando. Não repetir cargo init, inicialização Git,
+entrevista ou implementação dos incrementos concluídos.
 
-## Como retomar
+## Abrir
 
-Após `/clear`, selecione o Sol na interface e envie:
-
-```text
-Execute o plano em /home/joruge/repos/rust_gpui/docs/superpowers/plans/2026-11-12-tarefas-gpui.md.
-Leia primeiro o AGENTS.md e a spec vinculada no plano. Quero a aplicação de
-tarefas Rust + GPUI funcionando no meu Ubuntu, com CRUD, filtros e salvamento
-local. Faça os incrementos, testes e QA previstos sem reiniciar o brainstorming
-ou intercalar aulas. Registre aprendizados em $rust e $gpui, cada um no seu escopo.
-Ao terminar, mostre a aplicação rodando e o comando para abri-la. Deixe o goal
-final de codereview para minha próxima sessão após outro clear.
+```bash
+cd /home/joruge/repos/rust_gpui
+cargo run --locked --release
 ```
 
-O agente não alterou o modelo da conversa: a seleção do Sol é feita pelo usuário.
+[README](README.md) descreve uso e dados. [Stack/evidências](docs/stack.md)
+registra versões, comandos e resultados. Branch feat/tarefas-gpui, base develop
+802b129198e3e843b0a05f53ff8b77b7797fe628, checkpoint de código ef5f8ef.
+Não houve push, PR ou merge. A entrega deixou a janela aberta para uso.
 
-## Arquivos de entrada
+## Estado do QA
 
-- [AGENTS.md](AGENTS.md): acordos atuais.
-- [Plano](docs/superpowers/plans/2026-11-12-tarefas-gpui.md): tarefas, contratos,
-  testes, preparação do ambiente, QA e revisão futura.
-- [Desenho](docs/superpowers/specs/2026-11-12-tarefas-gpui-design.md): comportamento,
-  versões, regras, falhas e AC01–AC11.
-- [CONTEXT.md](CONTEXT.md): decisões, evidências e checklist DDD/Kaizen.
+[Relatório](docs/qa/reports/2026-11-12-full.md): 7 cenários aprovados, 1 verificação
+humana pendente. Teclado e mil tarefas exercitados; limite de 1s da AC08 não foi
+medido de modo confiável. Reproduzir com `bash scripts/qa-volume.sh` e seguir o
+protocolo do relatório. Não converter a ausência de medição em Pass.
 
-Skills pessoais: `/home/joruge/.codex/skills/rust/SKILL.md` e
-`/home/joruge/.codex/skills/gpui/SKILL.md`. QA: skills em
-`/home/joruge/.claude/skills/qa-report/` e `qa-execution/`.
+## Próxima sessão, após outro clear
 
-## Entrega esperada
+O usuário reservou o goal de codereview para outra sessão. Ele poderá enviar:
 
-Primeiro uma janela real; depois aplicação completa com SQLite local e testes.
-`cargo run --locked --release` deve abrir “Tarefas”. Não declarar esse comando
-funcional antes do build e da sessão gráfica. Se houver bloqueio real de sudo,
-dependência ou acesso à janela, registrar exatamente o que falta.
+```text
+Inicie um goal para revisar e corrigir esta aplicação com codereview:codereview
+até todas as categorias atingirem A com evidência. Leia AGENTS.md, CONTEXT.md,
+docs/stack.md e o relatório QA. Use develop como base e a branch atual como alvo.
+Configure o review para Rust (src/**/*.rs, tests/**/*.rs e testes internos,
+Cargo/toolchain/config e documentação), sem defaults TypeScript/React.
+Preserve o relatório original e achados abertos entre rodadas; correções ficam
+fora da skill de revisão somente leitura. Não publique, faça push ou merge.
+Não declare AC08 aprovado sem resolver sua medição pendente.
+```
 
-Depois da entrega/QA e do novo `/clear`, pedir explicitamente o goal de review
-com `codereview:codereview` até todas as categorias A. Usar os SHAs e resultados
-gravados pelo executor; não usar defaults TypeScript/React para Rust.
+Esse goal ainda não foi criado nem executado. A seleção do modelo continua sendo
+feita pelo usuário na interface; o agente não altera o modelo da conversa.
+
+## Fontes e aprendizados
+
+- [Plano executado](docs/superpowers/plans/2026-11-12-tarefas-gpui.md).
+- [Spec](docs/superpowers/specs/2026-11-12-tarefas-gpui-design.md).
+- [Contexto](CONTEXT.md) e [Kaizen](KAIZEN_LOG.md).
+- Skills pessoais rust/gpui em /home/joruge/.codex/skills/, referências de build,
+  InputState, lista e encerramento X11 atualizadas com fontes e limites.

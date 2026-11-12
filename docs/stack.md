@@ -1,132 +1,154 @@
 # Stack e evidências de execução
 
-## Histórico Git
+Aplicação implementada e aberta para uso local. QA funcional encerrado: sete
+cenários aprovados e uma medição pendente. AC08 permanece parcial pelo limite
+de 1 segundo não cronometrado de forma confiável. O goal de codereview não foi iniciado.
 
-- Base `develop`: `802b129198e3e843b0a05f53ff8b77b7797fe628` (documentação aprovada).
-- Implementação na branch `feat/tarefas-gpui`, sem remoto/push/PR.
-- SHA revisável será registrado ao final. O goal de codereview permanece para
-  outra sessão, conforme combinado.
+## Código e Git
 
-## Ambiente observado em 2026-11-12
+- Base develop: `802b129198e3e843b0a05f53ff8b77b7797fe628`.
+- Branch: `feat/tarefas-gpui`; sem remoto, push, PR ou merge.
+- Bootstrap: `19de704`; domínio/config: `b920071`; SQLite: `40f2480`;
+  estado: `98f1898`; interface e correções de QA: `ef5f8ef04e5d0015ec23f49aa5c3f1f81f40c7a2`.
+- Revisão futura: comparar develop com HEAD da feature, incluindo docs do commit
+  de entrega. Não usar main como base nem confundir este checkpoint com nota A.
 
-Ubuntu 24.04.5 LTS x86_64; X11; `DISPLAY=:1`. `rustc` e Cargo 1.97.0 estão
-instalados em stable; o pin nomeado 1.97.0 está sendo preparado pelo rustup.
-Há 125 GiB livres no filesystem e 31 GiB de RAM total no início da execução.
+## Abrir
 
-O inventário `dpkg-query` confirmou ausência de pkg-config, clang, cmake e dos
-headers listados no README. `sudo -n true` retornou “a password is required”.
-Foi solicitada instalação no terminal do usuário. Não houve build/janela ainda.
+```bash
+cd /home/joruge/repos/rust_gpui
+cargo run --locked --release
+```
 
-## Dependências declaradas
+Depois do build, `target/release/rust_gpui` abre diretamente. Lançamento final
+pelo comando acima, sem RUST_GPUI_DATA_DIR de QA: PID 1653298, janela X11
+0x05400001, visível. Captura `docs/qa/evidence/2026-11-12-full/final-application-running.png`.
+SHA256 do arquivo e `/proc/1653298/exe`:
+`25de9f5f56850fb0135df9b45e3d970c86bdeda508d7c158f9e46cc2fb569869`.
+PID é evidência da sessão, não identificador durável para scripts futuros.
 
-Rust 1.97.0, edition 2024; GPUI 0.2.2; gpui-component/assets 0.5.1;
-rusqlite 0.42.0 com SQLite bundled; thiserror 2.0.21; tempfile 3.27.0 em testes.
-As dependências são exatas no manifesto. Grafo e lock serão conferidos no fetch.
+## Versões e ambiente
 
-## Verificação
+Rust/rustc 1.97.0 (2d8144b78), Cargo 1.97.0 (c980f4866), edition 2024;
+rustfmt 1.9.0 e clippy 0.1.97. Pin nomeado 1.97.0 instalado e comandos normais
+validados. Cargo.lock versionado; dependências diretas exatas:
 
-| Incremento | Comando/evidência | Resultado |
+| Dependência | Versão/configuração |
+|---|---|
+| gpui | 0.2.2, features padrão |
+| gpui-component / assets | 0.5.1, sem features opcionais de webview/linguagens |
+| rusqlite | 0.42.0, bundled |
+| thiserror | 2.0.21 |
+| tempfile | 3.27.0, somente testes |
+
+`cargo tree --locked -i gpui` confirmou uma única 0.2.2 compartilhada. A resolução
+transitiva usa libc 0.2.189 por incompatibilidade real descrita abaixo.
+
+Ubuntu 24.04.5 LTS x86_64, X11 DISPLAY=:1, dois monitores 1920×1080. Pacotes do
+`scripts/install-system-deps.sh` confirmados installed por dpkg-query após
+instalação no terminal do usuário: build-essential, pkg-config, clang, cmake,
+fontconfig/FreeType, Wayland, X11/XCB, xkbcommon, OpenSSL e zstd de desenvolvimento.
+Não foi executado o setup inteiro do Zed nem instalados pacotes adicionais por suposição.
+
+No processo de QA 1644448, VK_LOADER_DEBUG=driver registrou em vkCreateDevice
+`Using "Intel(R) UHD Graphics 770 (ADL-S GT1)" with driver: "libvulkan_intel.so"`.
+Extrato em `docs/qa/evidence/2026-11-12-full/gpu-selection.txt`; log seeded-volume.log
+no workspace ignorado. Não se inferiu dispositivo apenas de vulkaninfo.
+
+## Dados e desenho implementado
+
+Um binário, domínio puro, estado de apresentação e SQLite. UI reutiliza InputState;
+render não toca banco nem recria formulário. Carga/escritas são jobs de background
+com Arc<Mutex<TaskRepository>> e retorno por WeakEntity. Uma escrita de cada vez;
+snapshot só muda após commit. Busy bloqueia formulário/novas escritas, mantendo
+filtro/rolagem; fechamento aguarda resultado ou decisão após falha.
+
+Diretório: RUST_GPUI_DATA_DIR absoluto; senão XDG_DATA_HOME absoluto + rust-gpui;
+senão HOME absoluto + .local/share/rust-gpui. tasks.sqlite3 e app.lock, fora do repo
+por padrão. Lock do SO mantido vivo; arquivo não removido para liberar instância.
+Schema 1, quick_check, SQL da tabela normalizado, validação de registros,
+journal_mode DELETE, synchronous FULL e timeout 250ms. Banco inválido preservado,
+sem reset, backup automático ou migração destrutiva. README descreve recuperação.
+
+## Gate técnico final
+
+| Comando | Resultado | Tempo desta execução |
 |---|---|---|
-| Baseline | `git init -b develop`, commit de documentação e branch de feature | concluído |
-| Ambiente | PATH, dpkg-query, versões e `sudo -n true` | instalação depende do usuário |
-| Primeira janela | build release e janela X11 | pendente |
-| Domínio/config | testes | pendente |
-| SQLite | persistência, validação, rollback e lock | pendente |
-| Estado | transições e preservação em falha | pendente |
-| Interface/QA | jornadas nativas e reabertura | pendente |
+| `cargo fmt --check` | exit 0 | 0.09s |
+| `cargo clippy --locked --all-targets -- -D warnings` | exit 0 | 0.32s |
+| `cargo test --locked` | exit 0 | 1.47s |
+| `cargo build --locked --release` | exit 0 | 0.27s |
 
-## Ajustes motivados pelo primeiro build
-
-O build release falhou em `xattr 0.2.3` por `libc::ENOATTR` ausente em
-`libc 0.2.191`. Grafo: GPUI → gpui_http_client → zed-async-tar → xattr.
-A correção mínima foi `cargo +stable update -p libc --precise 0.2.189`,
-registrada no lockfile, preservando as dependências diretas. O segundo build
-compilou xattr e zed-async-tar. Fonte: código publicado no registry e
-[remoção upstream](https://github.com/rust-lang/libc/issues/1356).
-
-Fetch e builds iniciais usam `+stable`, cujo rustc é exatamente 1.97.0
-(2d8144b78), enquanto se prepara o pin nomeado da mesma versão. Uma consulta
-rustup concorrente à instalação provocou disputa do arquivo parcial de clippy;
-a preparação foi repetida sequencialmente. Não se alterou a toolchain do projeto.
-
-O plano de QA foi preparado com `qa-report` durante a compilação: quatro
-jornadas/charters, oito cenários `untested`. O materializador validou os oito.
-Isso não comprova interação na janela.
-
-## Incremento 1 — janela comprovada
-
-Todos os pacotes nativos previstos foram confirmados como installed por
-dpkg-query após o usuário executar `scripts/install-system-deps.sh`. A toolchain
-nomeada 1.97.0 e rustfmt/clippy foram conferidos pelos comandos de versão.
-
-`cargo build --locked --release` passou. `cargo run --locked --release` abriu
-janela X11 900×640 com o bootstrap. Captura:
-`docs/qa/evidence/2026-11-12-full/initial-window.png`. SHA256 do binário e
-`/proc/1416628/exe`: `7ef705e59714955090cdeb0a01a7895a0cf830f53862e105480e44daa95eaada`.
-Fechamento via gerenciador de janelas retornou exit 0 e nenhum processo ficou.
-
-Ao fechar inicialmente, o GPUI X11 apresentou `RefCell already borrowed` em
-Platform::quit. Backtrace confirmou execução de quit durante close do backend.
-`App::defer` ainda executava no mesmo flush; agendar quit com `App::spawn`
-encerrou em outro ciclo e resolveu na repetição nativa. Fonte: GPUI 0.2.2,
-x11/client.rs:1388, stack em close-backtrace.log. Isso não generaliza a outros backends.
-
-O Cargo informa incompatibilidade futura upstream de `proc-macro-error2 2.0.1`
-(reexport privado de proc_macro, rust-lang/rust#127909). É aviso transitivo;
-não impede o build da toolchain fixada. Não foi aplicado patch amplo.
+Saída completa: `.superpowers/sdd/2026-11-12-tarefas-gpui/gate-final.log`; resumo gate-final.json. Comandos padrão do plano executados após as últimas mudanças de código.
 
 
-## Incremento 2 — regras e diretório
+Suíte: 6 domínio + 4 config + 9 persistência + 10 estado + 1 rollback interno =
+30 testes. Diretórios temporários, SQLite real, sem alterar HOME/XDG globais.
+Inclui rollback por trigger, reabertura, duplicatas por identidade, IDs não
+reutilizados, bytes inválidos preservados, schema/versão, lock/drop, NotFound,
+reentrada, erro preservando draft/snapshot, filtro em busy e decisão de fechar.
+Widgets GPUI são verificados separadamente nas jornadas, não por DOM.
 
-`cargo test --locked --release --test domain --test config`: dez testes passaram.
-RED: seis falhas no domínio e três na resolução, antes das regras. Testes usam
-argumentos, sem modificar HOME/XDG globais. Perfil release reutiliza o build
-inicial; o gate final também executará o comando padrão do plano.
+Aviso upstream de futura incompatibilidade: proc-macro-error2 2.0.1 reexporta
+proc_macro privado (rust-lang/rust#127909). Não impede a toolchain fixada; Clippy
+passou para os targets do projeto. Nenhum upgrade amplo foi feito para ocultar o aviso.
 
+## QA e aceite
 
-## Incremento 3 — armazenamento durável
+Relatório: [2026-11-12-full](qa/reports/2026-11-12-full.md). Quatro jornadas,
+quatro personas, oito cenários; 5 Pass + 2 Fixed + 1 Blocked (needs human verify),
+zero Pending. Duas falhas corrigidas e verificadas em ef5f8ef: largura do título
+longo e feedback Salvo apagado por eco do input. Nenhum bug ficou aberto.
 
-Nove testes de integração e um de rollback com trigger passaram em release,
-após falhas observadas antes da implementação. Cobrem CRUD/reabertura, ordem,
-IDs não reutilizados, duplicatas independentes, banco corrompido preservado byte
-a byte, versão futura, schema estranho, registros inválidos, lock vivo/drop e
-NotFound. Trigger SQLite abortando UPDATE mantém snapshot inclusive na reabertura.
+| AC | Resultado | Evidência |
+|---|---|---|
+| AC01 | aprovado | cargo run release, janela final visível e hash do processo |
+| AC02–04 | aprovados | CRUD, filtros, cancelamento, exclusão e reabertura na janela |
+| AC05 | aprovado | vazio/controle/201 recusados, 200/duplicatas/Unicode aceitos; testes e UI |
+| AC06 | aprovado no escopo registrado | falha real de escrita/retry e cancelamento nativos; busy/rollback em testes |
+| AC07 | aprovado | path/DB/versão/schema/segunda instância visíveis; preservação também testada |
+| AC08 | parcial | teclado, foco, 640×480 e 1.000 itens exercitados; limite de 1s pendente |
+| AC09 | aprovado | fmt/clippy/test/build no gate final |
+| AC10 | aprovado | README, árvore QA e evidências do binário identificado |
+| AC11 | aprovado no escopo registrado | referências Rust/GPUI atualizadas e validadas estruturalmente |
 
-Dados: RUST_GPUI_DATA_DIR absoluto, senão XDG_DATA_HOME absoluto + rust-gpui,
-senão HOME absoluto + .local/share/rust-gpui. Arquivos tasks.sqlite3 e app.lock.
-Lock do SO mantido vivo, não removido ao sair. Schema 1, quick_check, SQL da
-tabela normalizado, registros validados, DELETE journal/FULL/250ms. Cada ação
-retorna o snapshot só depois do commit; erros fazem rollback e são propagados.
-O banco inválido é preservado; recuperação exige corrigir caminho/permissões ou
-tratar cópia do arquivo externamente. Não há reset ou backup automático.
+A captura contínua FFmpeg não observou o frame de fim, embora a captura posterior
+da própria janela mostrasse o resultado correto. Instrumento inconclusivo; não
+se afirmou latência >1s ou aprovação. Protocolo humano no relatório; reproduzir
+com `bash scripts/qa-volume.sh`, que sempre cria diretório novo de 1.000 tarefas
+artificiais. Script executado e janela conferida; fechamento exit 0.
+Leitor de tela, contraste formal, escala de SO e outros sistemas não certificados.
+Não há promessa de FPS/consumo de memória.
 
+## Ajustes e decisões da execução
 
-## Incremento 4 — estado resistente a falhas
+- Sem worktree adicional: pasta inicialmente sem Git e plano explícito. A branch
+  isola o trabalho; não oferece um segundo checkout independente.
+- O parser task-start esperava “Task N” e recusou “Tarefa N”. Briefs foram lidos
+  no plano e ledger/testes registrados manualmente. Custo: controle manual do progresso.
+- xattr 0.2.3, via GPUI → gpui_http_client → zed-async-tar, falhou com libc
+  0.2.191 por ENOATTR ausente. Ajuste localizado do lock para 0.2.189 permitiu
+  build. [Fonte upstream](https://github.com/rust-lang/libc/issues/1356).
+  Custo: reavaliar esse pin ao atualizar a cadeia, sem tratá-lo como universal.
+- Quit síncrono em on_window_closed causou RefCell already borrowed no X11.
+  Backtrace mostrou reentrada em Platform::quit/flush_effects. App::defer ainda
+  falhou; App::spawn em outro ciclo encerrou com exit 0. Replay nativo antes/depois.
+- Instalações rustup concorrentes disputaram clippy.partial. Repetição sequencial
+  concluiu. Fetch/build provisório usou stable com o mesmo rustc/commit 1.97.0;
+  depois o pin nomeado e cargo run normal foram conferidos.
+- Revisão independente/goal adiada por instrução expressa do usuário, mantendo
+  branch local. Custo: a aplicação ainda aguarda essa revisão; não recebeu notas A.
 
-Nove testes de estado passaram após oito falhas comportamentais observadas.
-Busy recusa reentrada; erro preserva snapshot, draft, edição, confirmação e
-comando para retry. Sucesso limpa apenas o formulário relativo à ação; filtro
-escolhido durante busy permanece. Conclusão só remove linha filtrada após
-commit. Fechamento aguarda resultado ou decisão explícita após falha.
-Esses testes são puros e não alegam testar os widgets GPUI.
+## Aprendizados e retomada
 
+Rust: /home/joruge/.codex/skills/rust/references/build-compatibility.md.
+GPUI: /home/joruge/.codex/skills/gpui/references/state-and-x11.md. Entradas SKILL.md
+ligadas às referências; quick_validate.py retornou Skill is valid! para ambas.
+Exemplos vêm de falhas e replays reais desta execução; não houve avaliação
+independente de comportamento de agentes para essas adições de referência.
 
-## Incremento 5 — interface integrada
-
-Tela pt-BR com InputState persistente, checkbox/botões, três filtros, contagem
-global e uniform_list de linhas de 64px. Repositório carregado e comandos
-serializados no background executor; retorno por WeakEntity. Render não acessa
-SQLite. Fechamento adia busy e oferece retry/sair em falha.
-
-Jornada nativa observou duplicatas independentes, edição, conclusão/reabertura,
-filtros/estados vazios, confirmação com Cancelar em foco, Tab/Shift+Tab/Esc e
-exclusão por teclado. Reabrir confirmou só a tarefa restante. Janela 640×480
-mantém controles alcançáveis. QA encontrou e corrigiu largura da linha para
-títulos de 200 escalares e eco do input apagando Salvo. Fonte e evidências
-nos bugs de `docs/qa`; o teste de estado do eco falhou antes e passou depois.
-
-Binário do reteste: SHA256 25de9f5f56850fb0135df9b45e3d970c86bdeda508d7c158f9e46cc2fb569869,
-comparado ao processo em cada abertura. Suíte padrão `cargo test --locked -j 4`
-passou com 30 testes. Clippy all-targets -D warnings passou. Jobs=4 limita
-concorrência do build, sem mudar os perfis ou dependências.
-QA de falhas, volume e entrega seguem no incremento 6; não se certifica leitor de tela.
+Logs técnicos permanecem ignorados em `.superpowers/sdd/2026-11-12-tarefas-gpui/`;
+PNGs e extratos em `docs/qa/evidence/2026-11-12-full/`. Fontes QA são versionadas;
+DB, target, evidências pesadas, CSV gerado e credenciais não entram no Git.
+Após outro clear, o usuário poderá iniciar o goal de codereview com base develop,
+configuração Rust e os checkpoints acima. Não repetir scaffolding ou apagar banco.

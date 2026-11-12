@@ -126,3 +126,27 @@ respectivas; a revisão final com goal ocorre após outro clear, conforme pedido
   640×480; 30 testes padrão e clippy sem avisos no código do projeto.
 - Act: corrigir largura intrínseca que escondia ações e preservar feedback Salvo
   no eco programático do input. Detalhes em docs/qa; revisão final com goal não iniciada.
+
+
+## 2026-11-12 — Incremento 6: entregar com evidência e limite explícito
+
+- Plan: QA nativo, reabertura, falhas deliberadas isoladas e lista de 1.000 itens.
+- Do: qa-report criou jornadas/charters/8 cenários; qa-execution percorreu quatro
+  jornadas por quatro personas no release. Hash conferido contra processo.
+- Check: sete cenários aprovados, dois bugs de UI corrigidos/verificados; um
+  blocked-verify por captura contínua inconclusiva para o limite de 1s. Não
+  houve benchmark/FPS inventado. Falha real de journal preservou draft e retry
+  salvou uma vez, confirmado na UI reaberta. Cenários e relatório atualizados.
+- Act: script qa-volume.sh reproduz dados artificiais em diretório sempre novo;
+  README/CONTEXT/AGENTS/handoff atualizados. Protocolo humano da medição no relatório.
+- Yokoten Rust: references/build-compatibility.md — pin transitivo por erro real,
+  Cargo.lock, instalação serializada de toolchain. Fonte: erro/build e grafo.
+- Yokoten GPUI: references/state-and-x11.md — quit em outro ciclo do executor,
+  eco Change, largura de linha e dispositivo do processo Vulkan. Fonte: API
+  publicada da versão, testes e replays nativos. Quick_validate passou para ambas;
+  validação estrutural não é avaliação independente de agentes.
+- Decisões/custos preservados em docs/stack.md: branch no diretório original,
+  ledger manual por cabeçalhos PT, pin libc a reavaliar e revisão adiada pelo usuário.
+- Próximo ciclo autorizado nesta entrega é apenas a verificação humana pendente;
+  goal de codereview deve ser iniciado pelo usuário após novo clear. Oportunidade
+  de melhorar a instrumentação não autoriza refatoração adjacente.

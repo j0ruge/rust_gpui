@@ -1,7 +1,8 @@
 # Tarefas locais — desenho para Rust e GPUI
 
-Data: 2026-11-12. Estado: `ready_for_execution_handoff`.
-Execução reservada ao Sol após o `/clear` do usuário. Não houve build nesta fase.
+Data: 2026-11-12. Estado: `implemented_with_qa_limit`.
+Desenho executado na retomada autorizada; resultados em docs/stack.md e docs/qa.
+AC08 parcial por medição inconclusiva; os demais critérios têm evidência registrada.
 
 ## Intenção e escopo
 
@@ -167,8 +168,8 @@ recuperação externa. Não confundir isso com garantia contra qualquer falha f�
 | AC10 | README permite iniciar; `docs/qa` tem jornadas, resultados e evidência do binário examinado |
 | AC11 | Skill Rust/GPUI recebem aprendizados verificados em seu escopo; log mapeia evidências |
 
-O limite de 1s é critério do experimento, não promessa de 120 FPS. Nenhum AC
-está aprovado por execução neste documento. Um bloqueio gráfico impede declarar
+O limite de 1s é critério do experimento, não promessa de 120 FPS. Os resultados de execução dos ACs
+estão em docs/stack.md e no relatório QA; este documento define o contrato. Um bloqueio gráfico impede declarar
 AC01/02/08 aprovados mesmo que testes automatizados estejam verdes.
 
 ## Checklist DDD/Kaizen do desenho
@@ -180,7 +181,7 @@ AC01/02/08 aprovados mesmo que testes automatizados estejam verdes.
 - [x] Plano deve entregar primeiro janela e depois capacidades verificáveis.
 - [x] Prevenção prevista: título validado, transação, lock do SO e snapshot pós-commit.
 - [x] Reversão por incremento Git; dados reais fora dos testes e do controle de versão.
-- [ ] Verificar implementação, QA e efetividade dessas prevenções durante execução.
+- [x] Verificar implementação, QA e efetividade dessas prevenções durante execução; limite de medição registrado.
 
 Referências DDD: Evans, DDD parte IV (integridade da linguagem); Vernon, IDDD
 cap.4 (separação de responsabilidades). Kaizen: skill local, princípios de

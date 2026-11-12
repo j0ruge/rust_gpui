@@ -97,3 +97,8 @@ Formatação/testes não substituem uso da janela GPUI.
 As regras estão em `src/domain.rs`; persistência em `src/storage.rs`; transições
 em `src/state.rs`; widgets e jobs assíncronos em `src/ui/`. O
 [CONTEXT.md](CONTEXT.md) mantém o glossário e as decisões do produto.
+
+
+Para reproduzir a jornada de volume em dados artificiais, execute
+`bash scripts/qa-volume.sh` depois do build. Ele sempre cria outro diretório;
+a temporização de até 1s está pendente de verificação conforme o relatório QA.

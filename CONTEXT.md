@@ -1,6 +1,6 @@
 # Contexto — experimento Rust + GPUI
 
-Data: 2026-11-12. Estado: `in_progress`. Este documento preserva decisões e execução.
+Data: 2026-11-12. Estado: `implemented_with_qa_limit`. Este documento preserva decisões e execução.
 Plano: [tarefas GPUI](docs/superpowers/plans/2026-11-12-tarefas-gpui.md).
 Retomada: [EXECUTAR_COM_SOL.md](EXECUTAR_COM_SOL.md).
 Execução autorizada pelo usuário em 2026-11-12 após leitura do handoff.
@@ -54,7 +54,7 @@ Artefatos desse pedido criados: `AGENTS.md`, este `CONTEXT.md`,
 `/home/joruge/.codex/skills/gpui/SKILL.md`. As duas skills passaram no validador
 estrutural; isso não valida o futuro aplicativo.
 
-## Evidências observadas
+## Evidências observadas no planejamento
 
 - A pasta inicialmente continha apenas `Rust e o Editor Zed.md`, sem manifesto,
   código, README ou instruções locais. `git status --short --branch` retornou
@@ -118,7 +118,7 @@ do código, o funcionamento e os gates de QA/revisão permanecem não executados
 - [x] Definir uma fronteira de domínio simples para tarefas locais; separar
   domínio, apresentação e armazenamento apenas onde houver responsabilidade.
 - [x] Definir cenários de aceite com termos iguais aos usados na interface.
-- [ ] Conferir linguagem contra implementação e rótulos reais quando existirem.
+- [x] Conferir linguagem contra implementação e rótulos reais quando existirem.
 - [x] Avaliar necessidade real de repositório/abstrações; eventos, CQRS e
   microserviços não são requisitos desta missão.
 
@@ -135,16 +135,16 @@ Essas fontes orientam a análise, não comprovam aderência do aplicativo futuro
 - [x] Escrever incrementos pequenos com Plan/Do/Check/Act e reversão.
 - [x] Prever primeira entrega executável e testes proporcionais aos riscos.
 - [x] Definir prevenção de perda de dados e plano de falhas deliberadas em área isolada.
-- [ ] Executar e comprovar as prevenções e falhas planejadas.
-- [ ] Verificar cada incremento no artefato real; corrigir falhas antes de avançar.
-- [ ] Registrar lições e padronização no `KAIZEN_LOG.md` após cada ciclo concluído.
+- [x] Executar e comprovar as prevenções e falhas planejadas.
+- [x] Verificar cada incremento no artefato real; corrigir falhas antes de avançar.
+- [x] Registrar lições e padronização no `KAIZEN_LOG.md` após cada ciclo concluído.
 
 ### Aceite e revisão futuros
 
 - [x] Plano autocontido e handoff prontos antes de implementar.
-- [ ] Usuário retoma após clear e solicita execução ao Sol.
-- [ ] `qa-report`: jornadas, personas, cenários e charters em `docs/qa/`.
-- [ ] `qa-execution`: interações nativas, reabertura, evidências e falhas registradas.
+- [x] Usuário retoma após clear e solicita execução ao Sol.
+- [x] `qa-report`: jornadas, personas, cenários e charters em `docs/qa/`.
+- [x] `qa-execution`: interações nativas, reabertura, evidências e falhas registradas.
 - [ ] Codereview configurado para Rust (`.rs`, testes, Cargo e docs), base `develop`.
 - [ ] Todas as notas A sustentadas por revisão; casos não exercitados não recebem Pass.
 
@@ -172,3 +172,23 @@ resolução de diretório passaram em dez testes após RED comportamental (nove
 falhas, uma recusa já atendida pelo contrato de erro). Rejeição de controles
 ocorre antes de trim para não aceitar tab/quebra nas bordas. Títulos mantêm
 espaços internos; limite usa escalares Unicode. Ver `docs/stack.md`.
+
+
+## Entrega local — 2026-11-12
+
+Código no checkpoint ef5f8ef da feature, base develop 802b129. A janela final
+foi aberta com cargo run --locked --release, sem diretório de QA. Binário
+SHA256 25de9f5f56850fb0135df9b45e3d970c86bdeda508d7c158f9e46cc2fb569869.
+CRUD, filtros, autosave e recuperação implementados. Trinta testes; gate técnico,
+QA e evidências em docs/stack.md e docs/qa/reports/2026-11-12-full.md.
+
+Quatro jornadas percorridas: sete cenários aprovados, um blocked-verify pela
+medição de até 1s inconclusiva. AC08 parcial; não é aprovação de desempenho.
+Dois defeitos de UI encontrados e corrigidos, ambos verified. Nenhum goal ou
+codereview foi iniciado; ficam para a próxima sessão após clear, por pedido.
+Skills Rust/GPUI receberam referências verificadas; validação estrutural passou.
+
+Vocabulário implementado: TaskId positivo e estável; TaskTitle validado;
+TaskStatus Pending/Completed (pending/completed no banco); TaskFilter
+All/Pending/Completed; draft é rascunho, snapshot é a última lista confirmada,
+busy é escrita em andamento. A entidade GPUI continua distinta do domínio.

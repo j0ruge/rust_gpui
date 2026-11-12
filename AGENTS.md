@@ -19,24 +19,26 @@ servidor. Prazos, prioridades e projetos ficam fora da primeira versão.
 
 ## Etapa atual e continuidade
 
-- Plano autocontido pronto em
-  `docs/superpowers/plans/2026-11-12-tarefas-gpui.md`, com spec vinculada.
-  Retomada em `EXECUTAR_COM_SOL.md`. Ainda não há aplicação ou build.
-- O usuário fará `/clear` e executará com o Sol. Nesta sessão de planejamento
-  não iniciar scaffolding, instalação de dependências ou código do produto.
-  Na nova sessão, o pedido de executar o plano autoriza avançar pelas tarefas;
-  não reiniciar a entrevista ou pedir novamente escolhas já resolvidas.
-- Plataforma inicial definida pelo planejador: Ubuntu 24.04 x86_64/X11;
-  GPUI + componentes + SQLite, conforme versões e limites da spec.
-- Escrever documentação e as skills solicitadas já está autorizado.
-- Antes do handoff, registrar escopo, decisões, arquivos previstos, dependências,
-  incrementos, comandos de verificação, critérios de aceite e pendências.
-- Após a implementação: `qa-report` planeja as jornadas e `qa-execution` as
-  executa. Depois de outro `/clear`, o usuário iniciará `$goal` com
-  `codereview:codereview` até todas as categorias atingirem A com evidência.
-- Não afirmar troca de modelo, execução de QA ou conclusão de goal sem ter
-  realizado e verificado a ação. Uma revisão somente leitura não autoriza
-  mudanças fora do escopo de correção solicitado.
+- Aplicação implementada em `feat/tarefas-gpui`, a partir de develop
+  `802b129198e3e843b0a05f53ff8b77b7797fe628`. Checkpoint do código: ef5f8ef.
+  Não há remoto/push/PR/merge. Não repetir scaffolding ou reinstalar por suposição.
+- Execução: `cargo run --locked --release`. README e docs/stack.md descrevem
+  uso, versões, dados, testes, SHAs e limitações. A janela final foi aberta para uso.
+- Plano em docs/superpowers/plans/2026-11-12-tarefas-gpui.md executado;
+  resultado de QA em docs/qa/reports/2026-11-12-full.md. Trinta testes, fmt,
+  clippy e build; jornadas nativas CRUD, filtros, falhas, reabertura e mil itens.
+- QA encerrou com sete cenários aprovados e uma verificação humana pendente:
+  limite de 1s da AC08 não pôde ser medido com instrumento confiável. Protocolo
+  no relatório; scripts/qa-volume.sh cria fixture nova e isolada. Não declarar
+  AC08 integralmente aprovado nem prometer FPS.
+- Aprendizados verificados incorporados às skills pessoais rust/gpui em seus
+  escopos; exemplos e validação estrutural registrados em docs/stack.md.
+- Após outro `/clear`, o usuário iniciará explicitamente o goal com
+  codereview:codereview até todas as categorias A com evidência. Essa revisão
+  não ocorreu nesta execução. Usar base develop, configuração Rust e SHAs
+  registrados; preservar achados originais entre rodadas e incluir docs/testes.
+- Não afirmar troca de modelo, QA não realizado ou conclusão de goal não executado.
+  Uma revisão somente leitura não autoriza alterações fora da correção solicitada.
 
 ## Convenções
 
