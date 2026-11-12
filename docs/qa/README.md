@@ -1,7 +1,8 @@
 # QA de Tarefas
 
-Árvore viva do QA nativo do aplicativo Rust + GPUI. Entrada: executar
-`cargo run --locked --release` na sessão X11 do Ubuntu. Não há servidor web.
+Árvore viva do QA nativo do aplicativo Rust + GPUI. Automação por padrão:
+`bash scripts/qa-headless.sh`, após build release. Sessão visível apenas quando
+solicitada: `cargo run --locked --release` na sessão X11 do Ubuntu.
 
 Áreas: **TASK** (ações e validação), **DATA** (continuidade e recuperação),
 **UI** (teclado, tamanho e volume). Cenários ficam em `scenarios/`, jornadas
@@ -22,7 +23,40 @@ considera comportamento, experiência, falhas e continuidade. Auth, conta,
 rede, mobile e multiplataforma não se aplicam ao escopo local Ubuntu/X11.
 
 
-Rodada atual: [2026-11-12-full](reports/2026-11-12-full.md), encerrada com sete
+Rodada inicial: [2026-11-12-full](reports/2026-11-12-full.md), encerrada com sete
 cenários aprovados e um blocked-verify de temporização. Reproduzir o volume com
 `bash scripts/qa-volume.sh`; ele cria 1.000 registros artificiais em diretório novo.
 O protocolo humano está no relatório. A aplicação habitual abre sem esse script.
+
+## Regressões headless do PR #1
+
+Após `cargo build --locked --release`, execute `bash scripts/qa-headless.sh`.
+O wrapper cria um Xvfb exclusivo sem TCP, remove a herança Wayland e seleciona
+lavapipe. Python verifica o servidor virtual antes de qualquer entrada. Openbox
+e todas as ferramentas de teclado, mouse e captura ficam nesse display.
+
+Dependências de QA: `xvfb`, `xauth`, `openbox`, `xdotool`, `wmctrl`,
+`imagemagick`, `tesseract-ocr`, `python3`, `python3-pil` e
+`mesa-vulkan-drivers`. Confira a disponibilidade antes de instalar. Um ICD de
+software em outro local pode ser indicado por `RUST_GPUI_QA_ICD_FILE`.
+
+As 15 jornadas cobrem foco após concluir/reabrir/excluir, fechamento repetido,
+erros iniciais, segunda instância, validação, seleção oculta e retry de
+criação/edição com o rascunho atualizado. Fixtures SQLite, cópia do binário,
+SHA256, capturas, logs e `report.json` ficam num diretório novo em `/tmp`.
+O relatório exige resultado para cada jornada selecionada e exit 1 em falhas.
+
+Para uma execução dirigida, use, por exemplo:
+
+```bash
+bash scripts/qa-headless.sh --case retry_create --case retry_rename
+```
+
+`--binary /caminho/binario` escolhe o artefato; `--output /caminho/novo`
+escolhe a pasta de evidências. Não reutilize a pasta de uma execução anterior.
+Não execute `qa_headless.py` diretamente no desktop. O teste confirma a janela
+nativa e efeitos no SQLite, sem DOM. OCR reconhece rótulos; dados exatos são
+conferidos no banco artificial. Lavapipe e tempos totais dessas jornadas não
+certificam GPU física, FPS ou o limite de 1s da AC08.
+
+Resultados desta rodada: [correções do Claude](../reviews/2026-11-12-claude-pr1.md).

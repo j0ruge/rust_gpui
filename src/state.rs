@@ -1,5 +1,5 @@
 use crate::{
-    domain::{Task, TaskFilter, TaskId, TaskStatus},
+    domain::{Task, TaskFilter, TaskId, TaskStatus, TaskTitle},
     error::AppError,
     storage::TaskCommand,
 };
@@ -40,9 +40,17 @@ impl TaskScreenState {
             saved: false,
         }
     }
-    /// Reserva uma escrita e guarda sua intenção; recusa reentrada enquanto busy.
+    /// Valida o título antes de reservar a escrita; recusa reentrada enquanto busy.
     pub fn begin(&mut self, command: TaskCommand) -> Option<TaskCommand> {
         if self.busy {
+            return None;
+        }
+        if let TaskCommand::Create(raw) | TaskCommand::Rename(_, raw) = &command
+            && let Err(error) = TaskTitle::parse(raw)
+        {
+            self.saved = false;
+            self.error = Some(error.into());
+            self.pending_command = None;
             return None;
         }
         self.busy = true;

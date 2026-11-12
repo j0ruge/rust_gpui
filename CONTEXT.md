@@ -217,4 +217,20 @@ um achado médio e sete baixos. O principal envolve foco após desaparecer a
 Achados não foram corrigidos nesta solicitação de revisão. O PR segue em
 rascunho, sem merge; AC08 continua parcial. Relatório bruto local ignorado em
 `.superpowers/review/2026-11-12/claude-review-result.json`.
-As alterações posteriores ao HEAD revisado apenas registram este resultado.
+Na publicação inicial, as alterações posteriores ao HEAD revisado apenas
+registravam este resultado.
+
+## Tratamento dos achados do Claude — 2026-11-12
+
+Por pedido do usuário, os oito achados foram verificados e tratados, com
+evidências em [correções do PR #1](docs/reviews/2026-11-12-claude-pr1.md).
+O baseline e5ca7a8 tinha 33 testes; as correções passaram em 40 testes Rust e
+15 jornadas nativas em Xvfb exclusivo. Controles de seleção e retry usam o
+adaptador real; guards de busy/finish têm regressões de estado. Sabotagens em
+cópias comprovaram os sensores sem alterar o fonte ou executável do produto.
+
+Preferência explícita: QA automático headless para não disputar teclado/mouse
+com o desktop em uso. `scripts/qa-headless.sh` implementa esse isolamento;
+janela visível só quando solicitada. AC08 continua parcial. O merge foi
+autorizado condicionalmente à resolução/verificação; gates finais, revisão do
+delta e estado de integração devem ser consultados no relatório e no PR.

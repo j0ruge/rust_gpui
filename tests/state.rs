@@ -20,7 +20,74 @@ fn refuses_reentry_until_the_first_result() {
     assert_eq!(state.begin(command.clone()), Some(command.clone()));
     assert!(state.busy);
     assert_eq!(state.begin(TaskCommand::Create("Outra".into())), None);
+    assert_eq!(state.begin(TaskCommand::Create(String::new())), None);
+    assert!(state.busy);
+    assert!(state.error.is_none());
     assert_eq!(state.pending_command, Some(command));
+}
+
+#[test]
+fn cancel_during_busy_preserves_the_form_and_pending_write() {
+    let original = task(TaskStatus::Pending);
+    let mut state = TaskScreenState::new(vec![original.clone()]);
+    state.editing = Some(original.id());
+    state.delete_confirmation = Some(original.id());
+    state.draft = "Em andamento".into();
+    let command = TaskCommand::Rename(original.id(), state.draft.clone());
+    state.begin(command.clone());
+    state.cancel_edit();
+    assert!(state.busy);
+    assert_eq!(state.tasks, vec![original.clone()]);
+    assert_eq!(state.draft, "Em andamento");
+    assert_eq!(state.editing, Some(original.id()));
+    assert_eq!(state.delete_confirmation, Some(original.id()));
+    assert_eq!(state.pending_command, Some(command));
+    assert!(state.error.is_none());
+    assert!(!state.close_requested);
+}
+
+#[test]
+fn exit_without_saving_during_busy_cannot_abandon_the_pending_write() {
+    for closing in [false, true] {
+        let mut state = TaskScreenState::new(vec![]);
+        state.draft = "Em andamento".into();
+        let command = TaskCommand::Create(state.draft.clone());
+        state.begin(command.clone());
+        if closing {
+            assert!(!state.request_close());
+        }
+        state.exit_without_saving();
+        assert!(state.busy);
+        assert_eq!(state.pending_command, Some(command));
+        assert_eq!(state.draft, "Em andamento");
+        assert_eq!(state.close_requested, closing);
+        assert!(!state.can_close());
+    }
+}
+
+#[test]
+fn unsolicited_result_cannot_replace_snapshot_or_clear_a_failed_write() {
+    for failed_write in [false, true] {
+        for result in [Ok(vec![]), Err(AppError::StorageUnavailable)] {
+            let original = task(TaskStatus::Pending);
+            let mut state = TaskScreenState::new(vec![original.clone()]);
+            state.editing = Some(original.id());
+            state.draft = "Preservar".into();
+            let command = TaskCommand::Rename(original.id(), state.draft.clone());
+            if failed_write {
+                state.begin(command.clone());
+                state.finish(Err(AppError::StorageUnavailable));
+            }
+            state.finish(result);
+            assert!(!state.busy);
+            assert_eq!(state.tasks, vec![original.clone()]);
+            assert_eq!(state.editing, Some(original.id()));
+            assert_eq!(state.draft, "Preservar");
+            assert_eq!(state.pending_command, failed_write.then_some(command));
+            assert_eq!(state.error.is_some(), failed_write);
+            assert!(!state.saved);
+        }
+    }
 }
 
 #[test]
@@ -145,4 +212,28 @@ fn confirmed_input_echo_keeps_saved_feedback_but_new_typing_clears_it() {
     assert!(state.saved);
     state.update_draft("Próxima".into());
     assert!(!state.saved);
+}
+
+#[test]
+fn invalid_titles_never_start_a_write_or_require_a_save_decision_on_close() {
+    for raw in [String::new(), " ".into(), "é".repeat(201)] {
+        for editing in [false, true] {
+            let original = task(TaskStatus::Pending);
+            let mut state = TaskScreenState::new(vec![original.clone()]);
+            state.draft = raw.clone();
+            let command = if editing {
+                state.editing = Some(original.id());
+                TaskCommand::Rename(original.id(), raw.clone())
+            } else {
+                TaskCommand::Create(raw.clone())
+            };
+            assert_eq!(state.begin(command), None);
+            assert!(!state.busy);
+            assert!(state.pending_command.is_none());
+            assert!(matches!(state.error, Some(AppError::Validation(_))));
+            assert_eq!(state.draft, raw);
+            assert_eq!(state.tasks, vec![original]);
+            assert!(state.request_close());
+        }
+    }
 }

@@ -217,3 +217,41 @@ fn accepts_schema_formatting_without_changing_status_literals() {
         1
     );
 }
+
+#[test]
+fn refuses_column_declarations_that_only_match_after_joining_tokens() {
+    for declaration in ["TEXTNOT NULL", "TEX TNOT NULL"] {
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("tasks.sqlite3");
+        let conn = Connection::open(&path).unwrap();
+        conn.execute_batch(&SCHEMA.replace("title TEXT NOT NULL", &format!("title {declaration}")))
+            .unwrap();
+        drop(conn);
+        let before = fs::read(&path).unwrap();
+        assert!(
+            matches!(
+                TaskRepository::open(dir.path()),
+                Err(AppError::InvalidDatabase(_))
+            ),
+            "Declaração incompatível aceita: {declaration}"
+        );
+        assert_eq!(fs::read(path).unwrap(), before);
+    }
+}
+
+#[test]
+fn refuses_a_view_forged_as_the_reserved_sequence_table() {
+    let dir = tempdir().unwrap();
+    let path = dir.path().join("tasks.sqlite3");
+    let conn = Connection::open(&path).unwrap();
+    conn.execute_batch(SCHEMA).unwrap();
+    conn.execute_batch("PRAGMA writable_schema=ON; UPDATE sqlite_master SET type='view',rootpage=0,sql='CREATE VIEW sqlite_sequence AS SELECT 1 AS name' WHERE name='sqlite_sequence'; PRAGMA writable_schema=OFF;").unwrap();
+    drop(conn);
+    let before = fs::read(&path).unwrap();
+    let error = TaskRepository::open(dir.path()).err();
+    assert!(
+        matches!(error, Some(AppError::InvalidDatabase(_))),
+        "Resultado: {error:?}"
+    );
+    assert_eq!(fs::read(path).unwrap(), before);
+}

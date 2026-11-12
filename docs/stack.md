@@ -10,7 +10,8 @@ correções estão em [codereview](reviews/2026-11-12-codereview.md).
 - Base develop: `802b129198e3e843b0a05f53ff8b77b7797fe628`.
 - Branch: `feat/tarefas-gpui`; publicada posteriormente em
   [j0ruge/rust_gpui](https://github.com/j0ruge/rust_gpui), com `develop` como padrão.
-  [PR #1](https://github.com/j0ruge/rust_gpui/pull/1) em rascunho, sem merge.
+  [PR #1](https://github.com/j0ruge/rust_gpui/pull/1) aberto inicialmente em
+  rascunho; consultar o PR para o estado remoto de integração.
 - Bootstrap: `19de704`; domínio/config: `b920071`; SQLite: `40f2480`;
   estado: `98f1898`; interface e correções de QA: `ef5f8ef04e5d0015ec23f49aa5c3f1f81f40c7a2`.
 - Revisão futura: comparar develop com HEAD da feature, incluindo docs do commit
@@ -69,7 +70,8 @@ filtro/rolagem; fechamento aguarda resultado ou decisão após falha.
 Diretório: RUST_GPUI_DATA_DIR absoluto; senão XDG_DATA_HOME absoluto + rust-gpui;
 senão HOME absoluto + .local/share/rust-gpui. tasks.sqlite3 e app.lock, fora do repo
 por padrão. Lock do SO mantido vivo; arquivo não removido para liberar instância.
-Schema 1, quick_check, SQL da tabela normalizado, validação de registros,
+Schema 1, quick_check, SQL da tabela normalizado com literais preservados,
+colunas/tipos/restrições conferidos por table_xinfo, validação de registros,
 journal_mode DELETE, synchronous FULL e timeout 250ms. Banco inválido preservado,
 sem reset, backup automático ou migração destrutiva. README descreve recuperação.
 
@@ -160,3 +162,17 @@ só age sobre tarefas visíveis. A suíte passou a 33 testes, com fmt/clippy/bui
 release aprovados e replay nativo dos filtros, diálogos e reabertura. Evidências
 e achados originais no relatório de codereview; consulte ali o resultado da
 revisão do último delta. Não repetir scaffolding ou apagar banco.
+
+## Correções do parecer do Claude — PR #1
+
+O checkpoint ef5f8ef e os 30 testes acima descrevem a entrega inicial. Após
+o baseline e5ca7a8 (33 testes), a suíte passou a 40: 1 rollback interno,
+4 config, 7 domínio, 14 persistência e 14 estado. As 15 jornadas de
+`bash scripts/qa-headless.sh` passaram em Xvfb exclusivo com lavapipe; foco,
+validação, seleção e recuperação são exercitados na janela GPUI real.
+O loader do processo identifica llvmpipe, sem inferência a partir do inventário.
+
+O [relatório desta rodada](reviews/2026-11-12-claude-pr1.md) preserva as oito
+justificativas, baseline, sabotagens, gates e revisão do delta. Dependências
+e opções do QA em [qa/README.md](qa/README.md). Os testes e screenshots usam
+dados artificiais fora do diretório do usuário. AC08 continua parcial.

@@ -120,6 +120,7 @@ impl TaskScreen {
             weak.update(cx, |this, cx| this.request_close(window, cx))
                 .unwrap_or(true)
         });
+        this.screen_focus.focus(window);
         this.load(window, cx);
         this
     }
@@ -157,6 +158,7 @@ impl TaskScreen {
                     Err(error) => {
                         eprintln!("Falha ao abrir tarefas: {error:?}");
                         this.load_error = Some(error);
+                        this.screen_focus.focus(window);
                     }
                 }
                 cx.notify();
@@ -202,7 +204,10 @@ impl TaskScreen {
         let Some(repository) = self.repository.clone() else {
             return;
         };
+        let focus_before_write = window.focused(cx);
+        let focus_was_in_list = self.list_focus.contains_focused(window, cx);
         let Some(command) = self.state.begin(command) else {
+            cx.notify();
             return;
         };
         let work = cx.background_executor().spawn(async move {
@@ -232,6 +237,14 @@ impl TaskScreen {
                     this.cancel_focus.focus(window);
                 } else if was_dialog && !this.has_dialog() {
                     this.restore_focus(window, cx);
+                } else if !this.has_dialog()
+                    && (window.focused(cx).is_none() || window.focused(cx) == focus_before_write)
+                {
+                    if focus_was_in_list && !this.state.visible_tasks().is_empty() {
+                        this.list_focus.focus(window);
+                    } else {
+                        this.focus_input(window, cx);
+                    }
                 }
                 cx.notify();
             });
@@ -253,7 +266,7 @@ impl TaskScreen {
 
     /// Abandona edição ativa e foca nova tarefa fora de busy e de diálogos.
     fn new_task(&mut self, window: &mut Window, cx: &mut Context<Self>) {
-        if self.state.busy || self.has_dialog() {
+        if self.repository.is_none() || self.state.busy || self.has_dialog() {
             return;
         }
         if self.state.editing.is_some() {
@@ -285,15 +298,26 @@ impl TaskScreen {
         if self.state.busy || self.has_dialog() {
             return;
         }
-        self.previous_focus = window.focused(cx);
+        self.remember_focus(window, cx);
         self.state.delete_confirmation = Some(id);
         self.cancel_focus.focus(window);
         cx.notify();
     }
 
-    /// Restaura o foco anterior ao diálogo ou volta ao campo de entrada.
+    /// Guarda um alvo estável; botões e checkboxes da linha podem desaparecer.
+    fn remember_focus(&mut self, window: &Window, cx: &App) {
+        self.previous_focus = Some(if self.list_focus.contains_focused(window, cx) {
+            self.list_focus.clone()
+        } else {
+            self.input.read(cx).focus_handle(cx)
+        });
+    }
+
+    /// Restaura um alvo desenhado ou volta ao campo quando o filtro ficou vazio.
     fn restore_focus(&mut self, window: &mut Window, cx: &mut Context<Self>) {
-        if let Some(focus) = self.previous_focus.take() {
+        if let Some(focus) = self.previous_focus.take()
+            && (focus != self.list_focus || !self.state.visible_tasks().is_empty())
+        {
             focus.focus(window);
         } else {
             self.focus_input(window, cx);
@@ -319,11 +343,13 @@ impl TaskScreen {
 
     /// Adia fechamento até resolver escrita ou decisão após falha.
     fn request_close(&mut self, window: &mut Window, cx: &mut Context<Self>) -> bool {
+        if !self.has_dialog() {
+            self.remember_focus(window, cx);
+        }
         if self.state.request_close() {
             return true;
         }
         if self.state.error.is_some() {
-            self.previous_focus = window.focused(cx);
             self.cancel_focus.focus(window);
         }
         cx.notify();
@@ -592,6 +618,7 @@ impl Render for TaskScreen {
         }
         if let Some(error) = &self.load_error {
             let already_running = matches!(error, AppError::AlreadyRunning);
+            let invalid_directory = matches!(error, AppError::InvalidDataDir);
             return root.child(
                 div()
                     .flex()
@@ -603,11 +630,14 @@ impl Render for TaskScreen {
                     .rounded_md()
                     .child(div().text_lg().child(error.to_string()))
                     .child(div().text_sm().child(self.path_label()))
+                    .when(invalid_directory, |panel| {
+                        panel.child("Corrija o ambiente e reabra o aplicativo.")
+                    })
                     .child(
                         div()
                             .flex()
                             .gap_3()
-                            .when(!already_running, |row| {
+                            .when(!already_running && !invalid_directory, |row| {
                                 row.child(
                                     Button::new("retry-open")
                                         .label("Tentar novamente")
@@ -708,6 +738,8 @@ impl Render for TaskScreen {
                 ))
                 .child(if self.state.busy {
                     "Salvando…"
+                } else if matches!(self.state.error, Some(AppError::Validation(_))) {
+                    "Revise o título"
                 } else if self.state.error.is_some() {
                     "Não salvo"
                 } else if self.state.saved {
@@ -726,13 +758,16 @@ impl Render for TaskScreen {
                     .text_sm()
                     .text_color(rgb(0xf5aaa0))
                     .child(error.to_string())
-                    .child(self.path_label())
-                    .child(
-                        Button::new("retry-write")
-                            .label("Tentar novamente")
-                            .disabled(disabled)
-                            .on_click(cx.listener(|this, _, window, cx| this.retry(window, cx))),
-                    ),
+                    .when(!matches!(error, AppError::Validation(_)), |notice| {
+                        notice.child(self.path_label()).child(
+                            Button::new("retry-write")
+                                .label("Tentar novamente")
+                                .disabled(disabled)
+                                .on_click(
+                                    cx.listener(|this, _, window, cx| this.retry(window, cx)),
+                                ),
+                        )
+                    }),
             );
         }
         let count = self.state.visible_tasks().len();

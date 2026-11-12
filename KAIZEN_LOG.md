@@ -187,3 +187,21 @@ respectivas; a revisão final com goal ocorre após outro clear, conforme pedido
   o relatório foi publicado no comentário 6835369884 do PR #1.
 - Um achado médio e sete baixos; foco/teclado dependem de reprodução nativa.
   Achados preservados para triagem, sem correções automáticas ou merge.
+
+## 2026-11-12 — Tratar os oito achados do Claude com QA isolado
+
+- Plan: reproduzir antes de corrigir; preservar parecer original e baseline
+  de 33 testes, sem refatoração fora do escopo solicitado.
+- Do: restaurar foco em alvos estáveis, separar validação de falha de escrita,
+  orientar reabertura sem diretório, conferir metadados SQLite e recusar
+  separadores Unicode. Acrescentar regressões de seleção/retry e busy/finish.
+- Check: 40 testes Rust e 15 jornadas GPUI em Xvfb aprovados. Mutantes
+  compilados de foco, validação, esquema, domínio, seleção, retry e guards
+  foram detectados; evidências no relatório do PR #1. Gates finais e revisão
+  corretiva registrados ali antes de integrar. AC08 continua parcial.
+- Act: `AGENTS.md` fixa headless como padrão do projeto; README/docs explicam
+  dependências, comandos e limites. Produto em CONTEXT; aprendizados de
+  ambiente/QA já mapeados nas skills pessoais Rust/GPUI na etapa anterior.
+- Poka-yoke: o driver recusa desktop real, usa fixtures novas e fixa o binário.
+  Nesta retomada os mutantes receberam target próprio e o hash do produto
+  foi conferido antes/depois; não confiar em build fresh para restaurar alias.

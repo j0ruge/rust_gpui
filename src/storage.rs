@@ -127,7 +127,7 @@ fn validate_or_initialize(connection: &mut Connection) -> Result<(), AppError> {
     }
     let version: i64 = connection.pragma_query_value(None, "user_version", |row| row.get(0))?;
     let objects: i64 = connection.query_row(
-        "SELECT count(*) FROM sqlite_master WHERE name != 'sqlite_sequence'",
+        "SELECT count(*) FROM sqlite_master WHERE NOT (type='table' AND name='sqlite_sequence')",
         [],
         |row| row.get(0),
     )?;
@@ -144,7 +144,7 @@ fn validate_or_initialize(connection: &mut Connection) -> Result<(), AppError> {
         };
     }
     let object_count: i64 = connection.query_row(
-        "SELECT count(*) FROM sqlite_master WHERE name != 'sqlite_sequence'",
+        "SELECT count(*) FROM sqlite_master WHERE NOT (type='table' AND name='sqlite_sequence')",
         [],
         |row| row.get(0),
     )?;
@@ -173,6 +173,28 @@ fn validate_or_initialize(connection: &mut Connection) -> Result<(), AppError> {
             .collect::<String>()
     };
     if object_count != 1 || normalize(&sql) != normalize(TABLE_SQL) {
+        return Err(AppError::InvalidDatabase(None));
+    }
+    // A comparação textual não distingue tokens unidos; conferir também o esquema real.
+    let mut statement = connection.prepare(
+        "SELECT name, upper(type), \"notnull\", pk FROM pragma_table_xinfo('tasks') ORDER BY cid",
+    )?;
+    let columns = statement
+        .query_map([], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, i64>(2)?,
+                row.get::<_, i64>(3)?,
+            ))
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+    let expected = [
+        ("id".to_owned(), "INTEGER".to_owned(), 0, 1),
+        ("title".to_owned(), "TEXT".to_owned(), 1, 0),
+        ("status".to_owned(), "TEXT".to_owned(), 1, 0),
+    ];
+    if columns != expected {
         return Err(AppError::InvalidDatabase(None));
     }
     // Validar antes de alterar pragmas evita tratar um banco inválido como vazio.

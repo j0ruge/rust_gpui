@@ -34,9 +34,12 @@ impl TaskId {
 /// Título normalizado, não vazio e com até 200 escalares Unicode sem controles.
 pub struct TaskTitle(String);
 impl TaskTitle {
-    /// Recusa controles antes do trim, remove espaços das bordas e valida o limite.
+    /// Recusa controles e separadores Unicode de linha/parágrafo antes do trim e valida o limite.
     pub fn parse(raw: &str) -> Result<Self, DomainError> {
-        if raw.chars().any(char::is_control) {
+        if raw
+            .chars()
+            .any(|c| c.is_control() || matches!(c, '\u{2028}' | '\u{2029}'))
+        {
             return Err(DomainError::ControlCharacter);
         }
         let title = raw.trim();

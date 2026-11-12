@@ -20,14 +20,16 @@ servidor. Prazos, prioridades e projetos ficam fora da primeira versão.
 ## Etapa atual e continuidade
 
 - Aplicação implementada em `feat/tarefas-gpui`, a partir de develop
-  `802b129198e3e843b0a05f53ff8b77b7797fe628`. Checkpoint do código: ef5f8ef.
+  `802b129198e3e843b0a05f53ff8b77b7797fe628`. Entrega inicial histórica: ef5f8ef.
   Repositório público: https://github.com/j0ruge/rust_gpui; origin configurado.
-  PR #1: feat/tarefas-gpui → develop, em rascunho, sem merge.
+  PR #1: feat/tarefas-gpui → develop, aberto inicialmente em rascunho.
+  Consultar o PR para o estado remoto de integração.
   Não repetir scaffolding ou reinstalar por suposição.
 - Execução: `cargo run --locked --release`. README e docs/stack.md descrevem
   uso, versões, dados, testes, SHAs e limitações. A janela final foi aberta para uso.
 - Plano em docs/superpowers/plans/2026-11-12-tarefas-gpui.md executado;
-  resultado de QA em docs/qa/reports/2026-11-12-full.md. Trinta testes, fmt,
+  resultado de QA inicial em docs/qa/reports/2026-11-12-full.md. Naquela entrega:
+  trinta testes, fmt,
   clippy e build; jornadas nativas CRUD, filtros, falhas, reabertura e mil itens.
 - QA encerrou com sete cenários aprovados e uma verificação humana pendente:
   limite de 1s da AC08 não pôde ser medido com instrumento confiável. Protocolo
@@ -41,6 +43,10 @@ servidor. Prazos, prioridades e projetos ficam fora da primeira versão.
   documentação e testes, sem apagar achados refutados ou corrigidos.
 - Não afirmar troca de modelo, QA não realizado ou conclusão de goal não executado.
   Uma revisão somente leitura não autoriza alterações fora da correção solicitada.
+- Correções do parecer independente do Claude após o baseline e5ca7a8:
+  docs/reviews/2026-11-12-claude-pr1.md. Suíte atual: 40 testes Rust e 15
+  jornadas automatizadas em Xvfb. Consultar o relatório para gates, revisão do
+  delta e estado remoto; os checkpoints anteriores são históricos.
 
 ## Convenções
 
@@ -79,6 +85,9 @@ servidor. Prazos, prioridades e projetos ficam fora da primeira versão.
 
 ## Verificação e evidência
 
+- QA automático da janela é **headless por padrão**: `bash scripts/qa-headless.sh`,
+  com Xvfb exclusivo e dados artificiais. Nunca enviar teclado/mouse ao display
+  da sessão do usuário. Teste visível só quando ele pedir explicitamente.
 - Formatação, análise estática, testes, build e uso da janela são evidências
   distintas. Registrar comando, versão/build e resultado, inclusive bloqueios.
 - QA de GPUI usa a janela nativa, teclado e mouse; testes de DOM/navegador não

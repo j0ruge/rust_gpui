@@ -35,6 +35,20 @@ fn bounds_title_by_unicode_scalars_instead_of_bytes() {
 }
 
 #[test]
+fn rejects_unicode_line_and_paragraph_separators_before_trimming() {
+    use rust_gpui::domain::DomainError;
+    for separator in ['\u{2028}', '\u{2029}'] {
+        for title in [
+            format!("Antes{separator}Depois"),
+            format!("{separator}Título"),
+            format!("Título{separator}"),
+        ] {
+            assert_eq!(TaskTitle::parse(&title), Err(DomainError::ControlCharacter));
+        }
+    }
+}
+
+#[test]
 fn requires_positive_identity() {
     assert!(TaskId::new(0).is_err());
     assert!(TaskId::new(-1).is_err());

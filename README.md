@@ -40,7 +40,8 @@ Depois de compilar, abrir diretamente dispensa o Cargo:
   conclusão e Delete pede exclusão. Setas dentro do campo continuam editando texto.
 
 Títulos aceitam acentos e emojis, de 1 a 200 escalares Unicode, sem caracteres
-de controle. Espaços nas extremidades são removidos; espaços internos permanecem.
+de controle nem separadores de linha/parágrafo U+2028/U+2029. Espaços nas
+extremidades são removidos; espaços internos permanecem.
 A ordem é a de criação e não muda ao editar/concluir. Concluídas têm checkbox,
 rótulo e texto riscado. O contador de pendentes considera todos os filtros.
 
@@ -78,6 +79,9 @@ Erros aparecem na janela com caminho e ação de repetir quando aplicável. Um e
 de escrita mantém o rascunho e a última lista confirmada. Corrija permissões ou
 disponibilidade do diretório antes de tentar novamente. Se outra instância já
 estiver usando os dados, volte à janela existente ou feche-a normalmente.
+Se o diretório não puder ser resolvido, corrija as variáveis do ambiente e
+reabra o aplicativo. Título inválido pede correção no formulário e não inicia
+uma gravação pendente.
 
 Banco inválido ou de versão incompatível é recusado e preservado. Não há reset,
 migração destrutiva, exportação nem backup automático. Antes de uma recuperação
@@ -91,18 +95,26 @@ cargo fmt --check
 cargo clippy --locked --all-targets -- -D warnings
 cargo test --locked
 cargo build --locked --release
+bash scripts/qa-headless.sh
 ```
 
 Cada teste usa armazenamento temporário isolado. Verificações e limitações reais
 ficam em [docs/stack.md](docs/stack.md) e nas [jornadas de QA](docs/qa/README.md).
 Formatação/testes não substituem uso da janela GPUI. Achados e evidências das
 correções posteriores estão no [codereview](docs/reviews/2026-11-12-codereview.md).
+As [correções do parecer do Claude](docs/reviews/2026-11-12-claude-pr1.md)
+acrescentam regressões de foco, seleção, validação e recuperação.
+
+O QA automático usa uma janela nativa em Xvfb exclusivo, com dados artificiais
+e Vulkan por software; não envia teclado/mouse ao desktop em uso. Requer
+Xvfb/xauth, Openbox, xdotool, wmctrl, ImageMagick, Tesseract, Python 3/Pillow
+e lavapipe. Procedimento, seleção de casos e limites em [QA](docs/qa/README.md).
 
 As regras estão em `src/domain.rs`; persistência em `src/storage.rs`; transições
 em `src/state.rs`; widgets e jobs assíncronos em `src/ui/`. O
 [CONTEXT.md](CONTEXT.md) mantém o glossário e as decisões do produto.
 
 
-Para reproduzir a jornada de volume em dados artificiais, execute
+Para reproduzir manualmente a jornada visível de volume em dados artificiais, execute
 `bash scripts/qa-volume.sh` depois do build. Ele sempre cria outro diretório;
 a temporização de até 1s está pendente de verificação conforme o relatório QA.
