@@ -17,6 +17,12 @@ pub struct TaskScreenState {
     pub saved: bool,
 }
 impl TaskScreenState {
+    pub fn update_draft(&mut self, draft: String) {
+        if self.draft != draft {
+            self.saved = false;
+        }
+        self.draft = draft;
+    }
     pub fn new(tasks: Vec<Task>) -> Self {
         Self {
             tasks,

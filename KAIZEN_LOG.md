@@ -117,3 +117,12 @@ respectivas; a revisão final com goal ocorre após outro clear, conforme pedido
 - Plan/Do: estado puro com begin/finish, retry e fechamento adiado.
 - Check: nove cenários RED/GREEN e suíte release com 29 testes verdes.
 - Act: não apagar rascunho de outra ação nem converter erro em lista vazia.
+
+
+## 2026-11-12 — Incremento 5: integrar e revisar pelo uso
+
+- Plan/Do: UI nativa, jobs serializados fora da renderização e foco/atalhos.
+- Check: CRUD, filtros, cancelamento, confirmação e reabertura na janela; mínimo
+  640×480; 30 testes padrão e clippy sem avisos no código do projeto.
+- Act: corrigir largura intrínseca que escondia ações e preservar feedback Salvo
+  no eco programático do input. Detalhes em docs/qa; revisão final com goal não iniciada.

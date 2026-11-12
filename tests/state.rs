@@ -134,3 +134,15 @@ fn cancel_edit_does_not_generate_a_command() {
     assert!(state.draft.is_empty());
     assert!(state.pending_command.is_none());
 }
+
+#[test]
+fn confirmed_input_echo_keeps_saved_feedback_but_new_typing_clears_it() {
+    let mut state = TaskScreenState::new(vec![]);
+    state.draft = "Confirmada".into();
+    state.begin(TaskCommand::Create(state.draft.clone()));
+    state.finish(Ok(vec![task(TaskStatus::Pending)]));
+    state.update_draft(String::new());
+    assert!(state.saved);
+    state.update_draft("Próxima".into());
+    assert!(!state.saved);
+}

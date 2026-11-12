@@ -109,3 +109,24 @@ comando para retry. Sucesso limpa apenas o formulário relativo à ação; filtr
 escolhido durante busy permanece. Conclusão só remove linha filtrada após
 commit. Fechamento aguarda resultado ou decisão explícita após falha.
 Esses testes são puros e não alegam testar os widgets GPUI.
+
+
+## Incremento 5 — interface integrada
+
+Tela pt-BR com InputState persistente, checkbox/botões, três filtros, contagem
+global e uniform_list de linhas de 64px. Repositório carregado e comandos
+serializados no background executor; retorno por WeakEntity. Render não acessa
+SQLite. Fechamento adia busy e oferece retry/sair em falha.
+
+Jornada nativa observou duplicatas independentes, edição, conclusão/reabertura,
+filtros/estados vazios, confirmação com Cancelar em foco, Tab/Shift+Tab/Esc e
+exclusão por teclado. Reabrir confirmou só a tarefa restante. Janela 640×480
+mantém controles alcançáveis. QA encontrou e corrigiu largura da linha para
+títulos de 200 escalares e eco do input apagando Salvo. Fonte e evidências
+nos bugs de `docs/qa`; o teste de estado do eco falhou antes e passou depois.
+
+Binário do reteste: SHA256 25de9f5f56850fb0135df9b45e3d970c86bdeda508d7c158f9e46cc2fb569869,
+comparado ao processo em cada abertura. Suíte padrão `cargo test --locked -j 4`
+passou com 30 testes. Clippy all-targets -D warnings passou. Jobs=4 limita
+concorrência do build, sem mudar os perfis ou dependências.
+QA de falhas, volume e entrega seguem no incremento 6; não se certifica leitor de tela.

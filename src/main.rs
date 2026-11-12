@@ -8,6 +8,7 @@ use rust_gpui::ui::TaskScreen;
 fn main() {
     Application::new().with_assets(Assets).run(|cx: &mut App| {
         gpui_component::init(cx);
+        rust_gpui::ui::init(cx);
         Theme::change(ThemeMode::Dark, None, cx);
         let bounds = Bounds::centered(None, size(px(900.), px(640.)), cx);
         let result = cx.open_window(
@@ -22,7 +23,7 @@ fn main() {
                 ..Default::default()
             },
             |window, cx| {
-                let screen = cx.new(|_| TaskScreen);
+                let screen = cx.new(|cx| TaskScreen::new(window, cx));
                 cx.new(|cx| Root::new(screen, window, cx))
             },
         );
