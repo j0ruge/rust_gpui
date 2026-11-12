@@ -3,6 +3,7 @@ use crate::domain::Task;
 use gpui_component::checkbox::Checkbox;
 
 impl TaskScreen {
+    /// Monta linha de altura fixa com título limitado e ações disponíveis na largura da lista.
     pub(super) fn render_task_row(&mut self, task: Task, cx: &mut Context<Self>) -> AnyElement {
         let id = task.id();
         let completed = task.status() == TaskStatus::Completed;

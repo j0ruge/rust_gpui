@@ -31,6 +31,7 @@ actions!(
     ]
 );
 
+/// Registra atalhos locais da tela e navegação dos diálogos.
 pub fn init(cx: &mut App) {
     cx.bind_keys([
         KeyBinding::new("ctrl-n", NewTask, Some("TaskScreen")),
@@ -44,6 +45,7 @@ pub fn init(cx: &mut App) {
     ]);
 }
 
+/// Agenda saída em outro ciclo para evitar reentrada no backend X11.
 fn schedule_quit(cx: &mut App) {
     cx.spawn(async |cx| {
         let _ = cx.update(|cx| cx.quit());
@@ -51,6 +53,7 @@ fn schedule_quit(cx: &mut App) {
     .detach();
 }
 
+/// Adaptador nativo entre estado de apresentação, input, foco e jobs de persistência.
 pub struct TaskScreen {
     state: TaskScreenState,
     input: Entity<InputState>,
@@ -70,6 +73,7 @@ pub struct TaskScreen {
 }
 
 impl TaskScreen {
+    /// Cria input e assinaturas persistentes e inicia a carga fora da thread da janela.
     pub fn new(window: &mut Window, cx: &mut Context<Self>) -> Self {
         let input =
             cx.new(|cx| InputState::new(window, cx).placeholder("O que você precisa fazer?"));
@@ -120,10 +124,12 @@ impl TaskScreen {
         this
     }
 
+    /// Expõe o caminho dos dados ou orienta a resolução quando ele é inválido.
     fn path_label(&self) -> String {
         self.data_dir.as_ref().map(|path| path.display().to_string()).unwrap_or_else(|| "Diretório de dados não resolvido. Confira RUST_GPUI_DATA_DIR, XDG_DATA_HOME e HOME.".into())
     }
 
+    /// Carrega uma vez por tentativa; falhas ficam visíveis sem substituir o banco.
     fn load(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         let Some(path) = self.data_dir.clone() else {
             return;
@@ -159,10 +165,12 @@ impl TaskScreen {
         cx.notify();
     }
 
+    /// Foca o campo persistente da tela.
     fn focus_input(&self, window: &mut Window, cx: &mut Context<Self>) {
         self.input.update(cx, |input, cx| input.focus(window, cx));
     }
 
+    /// Sincroniza o widget somente quando seu valor difere do rascunho.
     fn sync_input(&self, window: &mut Window, cx: &mut Context<Self>) {
         let value = self.state.draft.clone();
         if self.input.read(cx).value().as_ref() != value.as_str() {
@@ -171,11 +179,13 @@ impl TaskScreen {
         }
     }
 
+    /// Identifica confirmação de exclusão ou decisão de saída após falha.
     fn has_dialog(&self) -> bool {
         self.state.delete_confirmation.is_some()
             || (self.state.close_requested && self.state.error.is_some())
     }
 
+    /// Transforma o formulário em criação ou edição quando a tela permite.
     fn submit(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         if self.has_dialog() || self.repository.is_none() {
             return;
@@ -187,6 +197,7 @@ impl TaskScreen {
         self.dispatch(command, window, cx);
     }
 
+    /// Executa escrita serializada em background e reconcilia seleção, formulário e fechamento.
     fn dispatch(&mut self, command: TaskCommand, window: &mut Window, cx: &mut Context<Self>) {
         let Some(repository) = self.repository.clone() else {
             return;
@@ -208,6 +219,12 @@ impl TaskScreen {
                 }
                 let was_dialog = this.has_dialog();
                 this.state.finish(result);
+                this.selected = this.selected.filter(|id| {
+                    this.state
+                        .visible_tasks()
+                        .iter()
+                        .any(|task| task.id() == *id)
+                });
                 this.sync_input(window, cx);
                 if this.state.can_close() {
                     schedule_quit(cx);
@@ -222,6 +239,7 @@ impl TaskScreen {
         cx.notify();
     }
 
+    /// Repete a intenção falha usando o rascunho atual em criação ou edição.
     fn retry(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         if let Some(command) = self.state.pending_command.clone() {
             let command = match command {
@@ -233,6 +251,7 @@ impl TaskScreen {
         }
     }
 
+    /// Abandona edição ativa e foca nova tarefa fora de busy e de diálogos.
     fn new_task(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         if self.state.busy || self.has_dialog() {
             return;
@@ -245,6 +264,7 @@ impl TaskScreen {
         cx.notify();
     }
 
+    /// Carrega o título confirmado no formulário, fora de busy e de diálogos.
     fn edit(&mut self, id: TaskId, window: &mut Window, cx: &mut Context<Self>) {
         if self.state.busy || self.has_dialog() {
             return;
@@ -260,6 +280,7 @@ impl TaskScreen {
         }
     }
 
+    /// Abre confirmação preservando o foco anterior e focando Cancelar.
     fn ask_delete(&mut self, id: TaskId, window: &mut Window, cx: &mut Context<Self>) {
         if self.state.busy || self.has_dialog() {
             return;
@@ -270,6 +291,7 @@ impl TaskScreen {
         cx.notify();
     }
 
+    /// Restaura o foco anterior ao diálogo ou volta ao campo de entrada.
     fn restore_focus(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         if let Some(focus) = self.previous_focus.take() {
             focus.focus(window);
@@ -278,6 +300,7 @@ impl TaskScreen {
         }
     }
 
+    /// Fecha diálogo ou abandona edição; escrita em andamento não é interrompida.
     fn cancel(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         if self.state.busy {
             return;
@@ -294,6 +317,7 @@ impl TaskScreen {
         cx.notify();
     }
 
+    /// Adia fechamento até resolver escrita ou decisão após falha.
     fn request_close(&mut self, window: &mut Window, cx: &mut Context<Self>) -> bool {
         if self.state.request_close() {
             return true;
@@ -306,6 +330,7 @@ impl TaskScreen {
         false
     }
 
+    /// Muda visualização e limpa seleção/rolagem, sem alterar os dados.
     fn set_filter(&mut self, filter: TaskFilter, cx: &mut Context<Self>) {
         if self.has_dialog() {
             return;
@@ -316,6 +341,7 @@ impl TaskScreen {
         cx.notify();
     }
 
+    /// Navega a lista e só permite ações por teclado sobre uma seleção visível.
     fn list_key(&mut self, event: &KeyDownEvent, window: &mut Window, cx: &mut Context<Self>) {
         let tasks = self.state.visible_tasks();
         if tasks.is_empty() {
@@ -339,8 +365,9 @@ impl TaskScreen {
             window.prevent_default();
             cx.notify();
         } else if self.list_focus.is_focused(window)
-            && let Some(id) = self.selected
+            && let Some(index) = index
         {
+            let id = tasks[index].id();
             match event.keystroke.key.as_str() {
                 "enter" => self.edit(id, window, cx),
                 "delete" => self.ask_delete(id, window, cx),
@@ -371,6 +398,7 @@ impl TaskScreen {
         }
     }
 
+    /// Cancela exclusão ou tenta salvar novamente na decisão de saída.
     fn dialog_cancel(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         if self.state.busy {
             return;
@@ -382,6 +410,7 @@ impl TaskScreen {
         }
     }
 
+    /// Confirma exclusão ou sai abandonando a intenção falha.
     fn dialog_confirm(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         if self.state.busy {
             return;
@@ -394,6 +423,7 @@ impl TaskScreen {
         }
     }
 
+    /// Monta o diálogo com foco explícito; GPUI ativa on_click por Enter/Espaço.
     fn render_dialog(&self, cx: &mut Context<Self>) -> AnyElement {
         let closing = self.state.close_requested && self.state.error.is_some();
         let title = if closing {
@@ -507,6 +537,7 @@ impl TaskScreen {
             .into_any_element()
     }
 
+    /// Encaminha clique nativo ou de teclado para a ação segura do diálogo.
     fn dialog_cancel_click(&mut self, _: &ClickEvent, window: &mut Window, cx: &mut Context<Self>) {
         self.dialog_cancel(window, cx);
     }

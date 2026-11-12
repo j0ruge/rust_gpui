@@ -2,6 +2,7 @@ use crate::domain::DomainError;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
+/// Erros observáveis da aplicação, com mensagens locais e causa técnica quando disponível.
 pub enum AppError {
     #[error(transparent)]
     Validation(#[from] DomainError),

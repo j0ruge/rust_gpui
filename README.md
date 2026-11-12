@@ -92,7 +92,8 @@ cargo build --locked --release
 
 Cada teste usa armazenamento temporário isolado. Verificações e limitações reais
 ficam em [docs/stack.md](docs/stack.md) e nas [jornadas de QA](docs/qa/README.md).
-Formatação/testes não substituem uso da janela GPUI.
+Formatação/testes não substituem uso da janela GPUI. Achados e evidências das
+correções posteriores estão no [codereview](docs/reviews/2026-11-12-codereview.md).
 
 As regras estão em `src/domain.rs`; persistência em `src/storage.rs`; transições
 em `src/state.rs`; widgets e jobs assíncronos em `src/ui/`. O

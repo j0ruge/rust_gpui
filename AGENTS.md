@@ -33,10 +33,10 @@ servidor. Prazos, prioridades e projetos ficam fora da primeira versão.
   AC08 integralmente aprovado nem prometer FPS.
 - Aprendizados verificados incorporados às skills pessoais rust/gpui em seus
   escopos; exemplos e validação estrutural registrados em docs/stack.md.
-- Após outro `/clear`, o usuário iniciará explicitamente o goal com
-  codereview:codereview até todas as categorias A com evidência. Essa revisão
-  não ocorreu nesta execução. Usar base develop, configuração Rust e SHAs
-  registrados; preservar achados originais entre rodadas e incluir docs/testes.
+- Goal de codereview iniciado explicitamente pelo usuário em 2026-11-12.
+  Achados originais, correções e evidências em docs/reviews/2026-11-12-codereview.md.
+  Usar base develop e revisar os deltas após o HEAD de cada rodada; incluir
+  documentação e testes, sem apagar achados refutados ou corrigidos.
 - Não afirmar troca de modelo, QA não realizado ou conclusão de goal não executado.
   Uma revisão somente leitura não autoriza alterações fora da correção solicitada.
 

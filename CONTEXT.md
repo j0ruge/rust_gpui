@@ -27,7 +27,8 @@ Execução autorizada pelo usuário em 2026-11-12 após leitura do handoff.
 4. Implementar por incrementos e verificar cada entrega.
 5. Planejar QA com `qa-report`, executar com `qa-execution`, registrar evidência.
 6. Após novo `/clear`, iniciar o goal solicitado de revisão e correção até
-   todas as categorias do codereview serem A. Essa fase ainda não começou.
+   todas as categorias do codereview serem A. Goal iniciado em 2026-11-12;
+   achados e evidências em `docs/reviews/2026-11-12-codereview.md`.
 
 Respostas confirmadas pelo usuário nesta sessão:
 
@@ -107,8 +108,9 @@ e ambiente serão verificadas na execução, sem fingir que já passaram.
 
 ## Checklist de aderência DDD e Kaizen
 
-Resultado: plano atende aos critérios de desenho DDD/Kaizen abaixo. A aderência
-do código, o funcionamento e os gates de QA/revisão permanecem não executados.
+No planejamento, os critérios abaixo orientaram o desenho DDD/Kaizen. A execução
+e o QA posteriores estão registrados em “Entrega local”; AC08 permanece parcial
+pela medição de até 1s pendente. A revisão atual está em `docs/reviews/2026-11-12-codereview.md`.
 
 ### DDD
 
@@ -145,7 +147,7 @@ Essas fontes orientam a análise, não comprovam aderência do aplicativo futuro
 - [x] Usuário retoma após clear e solicita execução ao Sol.
 - [x] `qa-report`: jornadas, personas, cenários e charters em `docs/qa/`.
 - [x] `qa-execution`: interações nativas, reabertura, evidências e falhas registradas.
-- [ ] Codereview configurado para Rust (`.rs`, testes, Cargo e docs), base `develop`.
+- [x] Codereview configurado para Rust (`.rs`, testes, Cargo e docs), base `develop`.
 - [ ] Todas as notas A sustentadas por revisão; casos não exercitados não recebem Pass.
 
 ## Fontes e skills localizadas
@@ -184,8 +186,8 @@ QA e evidências em docs/stack.md e docs/qa/reports/2026-11-12-full.md.
 
 Quatro jornadas percorridas: sete cenários aprovados, um blocked-verify pela
 medição de até 1s inconclusiva. AC08 parcial; não é aprovação de desempenho.
-Dois defeitos de UI encontrados e corrigidos, ambos verified. Nenhum goal ou
-codereview foi iniciado; ficam para a próxima sessão após clear, por pedido.
+Dois defeitos de UI encontrados e corrigidos, ambos verified. Naquela entrega, nenhum goal ou
+codereview havia sido iniciado. A revisão posterior está em `docs/reviews/2026-11-12-codereview.md`.
 Skills Rust/GPUI receberam referências verificadas; validação estrutural passou.
 
 Vocabulário implementado: TaskId positivo e estável; TaskTitle validado;

@@ -16,6 +16,7 @@ last_report: reports/2026-11-12-full.md
 overlaps:
 ---
 
-Planejado a partir da jornada; aguardando execução na janela nativa.
+Tentativa de medição executada na janela nativa com instrumento inconclusivo.
+A verificação humana continua pendente; consulte `../reports/2026-11-12-full.md`.
 
 Medição bloqueada pelo instrumento: captura contínua não registrou mudança que apareceu na captura da janela seguinte. Não há latência aprovada ou falha de desempenho atribuída ao produto. Procedimento humano no relatório e scripts/qa-volume.sh.

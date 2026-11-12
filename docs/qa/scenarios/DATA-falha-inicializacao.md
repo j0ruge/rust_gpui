@@ -16,4 +16,5 @@ last_report: reports/2026-11-12-full.md
 overlaps:
 ---
 
-Planejado a partir da jornada; aguardando execução na janela nativa.
+Executado na janela nativa; resultado e eventuais retestes registrados em
+`../reports/2026-11-12-full.md`.

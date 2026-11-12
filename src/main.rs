@@ -5,6 +5,7 @@ use gpui_component::{Root, Theme, ThemeMode};
 use gpui_component_assets::Assets;
 use rust_gpui::ui::TaskScreen;
 
+/// Inicializa assets, tema e tela; agenda encerramento após a última janela.
 fn main() {
     Application::new().with_assets(Assets).run(|cx: &mut App| {
         gpui_component::init(cx);

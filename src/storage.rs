@@ -12,18 +12,21 @@ use std::{
 const TABLE_SQL: &str = "CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, status TEXT NOT NULL CHECK (status IN ('pending', 'completed')))";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+/// Intenção de escrita serializada pela interface e confirmada por transação.
 pub enum TaskCommand {
     Create(String),
     Rename(TaskId, String),
     SetStatus(TaskId, TaskStatus),
     Delete(TaskId),
 }
+/// Conexão SQLite e lock exclusivo do diretório, mantido até o drop.
 pub struct TaskRepository {
     connection: Connection,
     // A exclusividade depende do handle vivo, nunca da presença do arquivo.
     _lock: File,
 }
 impl TaskRepository {
+    /// Abre diretório absoluto com lock; inicializa banco vazio ou recusa versão, esquema e dados inválidos.
     pub fn open(data_dir: &Path) -> Result<Self, AppError> {
         if !data_dir.is_absolute() {
             return Err(AppError::InvalidDataDir);
@@ -52,10 +55,12 @@ impl TaskRepository {
         Ok(repo)
     }
 
+    /// Lê e valida tarefas em ordem crescente de identidade.
     pub fn list(&self) -> Result<Vec<Task>, AppError> {
         read_tasks(&self.connection)
     }
 
+    /// Valida e executa uma intenção; retorna o snapshot somente após commit. Erro reverte a transação.
     pub fn apply(&mut self, command: TaskCommand) -> Result<Vec<Task>, AppError> {
         let tx = self.connection.transaction()?;
         let tasks = read_tasks(&tx)?;
@@ -112,6 +117,7 @@ impl TaskRepository {
     }
 }
 
+/// Valida o formato suportado antes de alterar pragmas; só inicializa um banco vazio e sem versão.
 fn validate_or_initialize(connection: &mut Connection) -> Result<(), AppError> {
     let check: String = connection
         .query_row("PRAGMA quick_check", [], |row| row.get(0))
@@ -121,7 +127,7 @@ fn validate_or_initialize(connection: &mut Connection) -> Result<(), AppError> {
     }
     let version: i64 = connection.pragma_query_value(None, "user_version", |row| row.get(0))?;
     let objects: i64 = connection.query_row(
-        "SELECT count(*) FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'",
+        "SELECT count(*) FROM sqlite_master WHERE name != 'sqlite_sequence'",
         [],
         |row| row.get(0),
     )?;
@@ -137,8 +143,8 @@ fn validate_or_initialize(connection: &mut Connection) -> Result<(), AppError> {
             Err(AppError::IncompatibleVersion)
         };
     }
-    let table_count: i64 = connection.query_row(
-        "SELECT count(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
+    let object_count: i64 = connection.query_row(
+        "SELECT count(*) FROM sqlite_master WHERE name != 'sqlite_sequence'",
         [],
         |row| row.get(0),
     )?;
@@ -150,12 +156,23 @@ fn validate_or_initialize(connection: &mut Connection) -> Result<(), AppError> {
         )
         .map_err(|error| AppError::InvalidDatabase(Some(error)))?;
     let normalize = |sql: &str| {
+        let mut in_literal = false;
         sql.chars()
-            .filter(|c| !c.is_whitespace() && *c != ';')
-            .flat_map(char::to_lowercase)
+            .filter_map(|c| {
+                if c == '\'' {
+                    in_literal = !in_literal;
+                    Some(c)
+                } else if in_literal {
+                    Some(c)
+                } else if c.is_ascii_whitespace() || c == ';' {
+                    None
+                } else {
+                    Some(c.to_ascii_lowercase())
+                }
+            })
             .collect::<String>()
     };
-    if table_count != 1 || normalize(&sql) != normalize(TABLE_SQL) {
+    if object_count != 1 || normalize(&sql) != normalize(TABLE_SQL) {
         return Err(AppError::InvalidDatabase(None));
     }
     // Validar antes de alterar pragmas evita tratar um banco inválido como vazio.
@@ -163,6 +180,7 @@ fn validate_or_initialize(connection: &mut Connection) -> Result<(), AppError> {
     Ok(())
 }
 
+/// Reconstrói registros validados ou devolve erro, sem ocultar registros inválidos.
 fn read_tasks(connection: &Connection) -> Result<Vec<Task>, AppError> {
     let mut statement = connection.prepare("SELECT id,title,status FROM tasks ORDER BY id ASC")?;
     let rows = statement.query_map([], |row| {
@@ -204,6 +222,10 @@ mod tests {
                 .is_err()
         );
         assert_eq!(repo.list().unwrap()[0].title().as_str(), "Antes");
+        // Retirar a falha injetada permite testar a reabertura do esquema válido.
+        let conn = Connection::open(dir.path().join("tasks.sqlite3")).unwrap();
+        conn.execute_batch("DROP TRIGGER fail_update;").unwrap();
+        drop(conn);
         drop(repo);
         let repo = TaskRepository::open(dir.path()).unwrap();
         let tasks = repo.list().unwrap();

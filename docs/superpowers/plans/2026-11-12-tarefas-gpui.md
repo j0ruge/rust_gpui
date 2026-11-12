@@ -38,7 +38,10 @@ rusqlite 0.42.0 bundled; thiserror 2.0.21; tempfile 3.27.0 para testes.
 - Primeiro resolver falha do incremento atual; não carregar defeito para o próximo.
 - Sem push, PR, publicação, merge ou instalador nesta execução.
 
-## Contexto verificado e limites
+## Contexto verificado antes da implementação
+
+Fotografia do planejamento. Os resultados posteriores estão em “Resultado da
+execução” e em `docs/stack.md`; as ausências abaixo não descrevem a entrega atual.
 
 A pasta tem a referência original, AGENTS, CONTEXT, KAIZEN_LOG e estes documentos.
 Ainda não há Git, Cargo.toml ou código. Rust/Cargo 1.97.0, rustfmt e clippy existem.

@@ -150,3 +150,19 @@ respectivas; a revisão final com goal ocorre após outro clear, conforme pedido
 - Próximo ciclo autorizado nesta entrega é apenas a verificação humana pendente;
   goal de codereview deve ser iniciado pelo usuário após novo clear. Oportunidade
   de melhorar a instrumentação não autoriza refatoração adjacente.
+
+
+## 2026-11-12 — Corrigir integridade e seleção com evidência
+
+- Plan: revisão Rust/GPUI contra develop, preservando achados e calibrando hipóteses.
+- Do: recusar objetos extras de SQLite e preservar literais na comparação do
+  esquema; reconciliar seleção quando a tarefa sai do filtro; corrigir textos
+  de estado e documentar os contratos para estudo posterior.
+- Check: duas falhas comportamentais antes da correção; 33 testes verdes,
+  fmt/clippy/build release; três mutantes de persistência detectados em cópias
+  isoladas. Replay nativo nos dois filtros, edição visível, diálogos e reabertura.
+- Act: manter evidência de cada rodada em docs/reviews/2026-11-12-codereview.md.
+  A hipótese de falha no teclado dos diálogos foi refutada pelo fonte GPUI 0.2.2
+  e pela janela; não gerou alteração funcional. AC08 continua parcial.
+- Decisões deste produto ficam no relatório/CONTEXT; não alterar skills pessoais
+  durante a revisão. O gate independente do último delta encerra o goal.

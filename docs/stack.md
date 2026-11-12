@@ -2,7 +2,8 @@
 
 Aplicação implementada e aberta para uso local. QA funcional encerrado: sete
 cenários aprovados e uma medição pendente. AC08 permanece parcial pelo limite
-de 1 segundo não cronometrado de forma confiável. O goal de codereview não foi iniciado.
+de 1 segundo não cronometrado de forma confiável. A revisão posterior e as
+correções estão em [codereview](reviews/2026-11-12-codereview.md).
 
 ## Código e Git
 
@@ -70,7 +71,7 @@ Schema 1, quick_check, SQL da tabela normalizado, validação de registros,
 journal_mode DELETE, synchronous FULL e timeout 250ms. Banco inválido preservado,
 sem reset, backup automático ou migração destrutiva. README descreve recuperação.
 
-## Gate técnico final
+## Gate técnico da entrega ef5f8ef
 
 | Comando | Resultado | Tempo desta execução |
 |---|---|---|
@@ -150,5 +151,9 @@ independente de comportamento de agentes para essas adições de referência.
 Logs técnicos permanecem ignorados em `.superpowers/sdd/2026-11-12-tarefas-gpui/`;
 PNGs e extratos em `docs/qa/evidence/2026-11-12-full/`. Fontes QA são versionadas;
 DB, target, evidências pesadas, CSV gerado e credenciais não entram no Git.
-Após outro clear, o usuário poderá iniciar o goal de codereview com base develop,
-configuração Rust e os checkpoints acima. Não repetir scaffolding ou apagar banco.
+O goal de codereview foi iniciado após a entrega, com base develop. As correções
+recusam objetos extras no esquema e preservam literais SQL; a seleção de teclado
+só age sobre tarefas visíveis. A suíte passou a 33 testes, com fmt/clippy/build
+release aprovados e replay nativo dos filtros, diálogos e reabertura. Evidências
+e achados originais no relatório de codereview; consulte ali o resultado da
+revisão do último delta. Não repetir scaffolding ou apagar banco.

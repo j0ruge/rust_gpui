@@ -38,7 +38,8 @@ fora da skill de revisão somente leitura. Não publique, faça push ou merge.
 Não declare AC08 aprovado sem resolver sua medição pendente.
 ```
 
-Esse goal ainda não foi criado nem executado. A seleção do modelo continua sendo
+Esse goal foi iniciado posteriormente em 2026-11-12; andamento e evidências em
+`docs/reviews/2026-11-12-codereview.md`. A seleção do modelo continua sendo
 feita pelo usuário na interface; o agente não altera o modelo da conversa.
 
 ## Fontes e aprendizados

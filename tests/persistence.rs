@@ -154,3 +154,66 @@ fn directory_that_is_a_file_is_reported_and_preserved() {
     assert!(TaskRepository::open(&path).is_err());
     assert_eq!(fs::read(path).unwrap(), b"preservar");
 }
+
+#[test]
+fn refuses_extra_schema_objects_without_changing_file() {
+    for extra in [
+        "CREATE TRIGGER remove_others AFTER UPDATE ON tasks BEGIN DELETE FROM tasks WHERE id != NEW.id; END;",
+        "CREATE VIEW task_copy AS SELECT * FROM tasks;",
+        "CREATE INDEX task_titles ON tasks(title);",
+        "CREATE TABLE sqliteXforeign (value TEXT);",
+    ] {
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("tasks.sqlite3");
+        let conn = Connection::open(&path).unwrap();
+        conn.execute_batch(SCHEMA).unwrap();
+        conn.execute_batch(extra).unwrap();
+        drop(conn);
+        let before = fs::read(&path).unwrap();
+        assert!(
+            matches!(
+                TaskRepository::open(dir.path()),
+                Err(AppError::InvalidDatabase(_))
+            ),
+            "Objeto inesperado aceito: {extra}"
+        );
+        assert_eq!(fs::read(&path).unwrap(), before);
+    }
+}
+
+#[test]
+fn refuses_changed_status_literals_without_changing_file() {
+    for literal in ["PENDING", "pend ing", "pend;ing"] {
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("tasks.sqlite3");
+        let conn = Connection::open(&path).unwrap();
+        conn.execute_batch(&SCHEMA.replace("'pending'", &format!("'{literal}'")))
+            .unwrap();
+        drop(conn);
+        let before = fs::read(&path).unwrap();
+        assert!(
+            matches!(
+                TaskRepository::open(dir.path()),
+                Err(AppError::InvalidDatabase(_))
+            ),
+            "Literal incompatível aceito: {literal}"
+        );
+        assert_eq!(fs::read(&path).unwrap(), before);
+    }
+}
+
+#[test]
+fn accepts_schema_formatting_without_changing_status_literals() {
+    let dir = tempdir().unwrap();
+    let conn = Connection::open(dir.path().join("tasks.sqlite3")).unwrap();
+    conn.execute_batch("create table tasks (\n id integer primary key autoincrement,\n title text not null,\n status text not null check (status in ('pending', 'completed'))\n); pragma user_version=1;")
+        .unwrap();
+    drop(conn);
+    let mut repo = TaskRepository::open(dir.path()).unwrap();
+    assert_eq!(
+        repo.apply(TaskCommand::Create("Nova".into()))
+            .unwrap()
+            .len(),
+        1
+    );
+}

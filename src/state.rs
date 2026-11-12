@@ -4,6 +4,7 @@ use crate::{
     storage::TaskCommand,
 };
 
+/// Estado de apresentação; o snapshot só muda após uma escrita confirmada.
 pub struct TaskScreenState {
     pub tasks: Vec<Task>,
     pub filter: TaskFilter,
@@ -17,12 +18,14 @@ pub struct TaskScreenState {
     pub saved: bool,
 }
 impl TaskScreenState {
+    /// Atualiza o rascunho; eco idêntico do input preserva o feedback Salvo.
     pub fn update_draft(&mut self, draft: String) {
         if self.draft != draft {
             self.saved = false;
         }
         self.draft = draft;
     }
+    /// Inicia a tela com snapshot confirmado, filtro Todas e formulário vazio.
     pub fn new(tasks: Vec<Task>) -> Self {
         Self {
             tasks,
@@ -37,6 +40,7 @@ impl TaskScreenState {
             saved: false,
         }
     }
+    /// Reserva uma escrita e guarda sua intenção; recusa reentrada enquanto busy.
     pub fn begin(&mut self, command: TaskCommand) -> Option<TaskCommand> {
         if self.busy {
             return None;
@@ -47,6 +51,7 @@ impl TaskScreenState {
         self.pending_command = Some(command.clone());
         Some(command)
     }
+    /// Aplica o resultado da escrita em andamento; falha preserva snapshot, rascunho e retry.
     pub fn finish(&mut self, result: Result<Vec<Task>, AppError>) {
         if !self.busy {
             return;
@@ -82,25 +87,30 @@ impl TaskScreenState {
             }
         }
     }
+    /// Filtra o snapshot mantendo a ordem de criação.
     pub fn visible_tasks(&self) -> Vec<&Task> {
         self.tasks
             .iter()
             .filter(|task| self.filter.matches(task))
             .collect()
     }
+    /// Conta pendentes em todo o snapshot, independentemente do filtro.
     pub fn pending_count(&self) -> usize {
         self.tasks
             .iter()
             .filter(|task| task.status() == TaskStatus::Pending)
             .count()
     }
+    /// Registra a intenção de sair e informa se não há escrita a resolver.
     pub fn request_close(&mut self) -> bool {
         self.close_requested = true;
         self.can_close()
     }
+    /// Permite fechar quando solicitado, sem escrita ativa ou comando pendente.
     pub fn can_close(&self) -> bool {
         self.close_requested && !self.busy && self.pending_command.is_none()
     }
+    /// Descarta a intenção que falhou e autoriza fechar; não interrompe uma escrita ativa.
     pub fn exit_without_saving(&mut self) {
         if !self.busy {
             self.pending_command = None;
@@ -108,6 +118,7 @@ impl TaskScreenState {
             self.close_requested = true;
         }
     }
+    /// Descarta formulário e retry fora de busy, preservando as tarefas confirmadas.
     pub fn cancel_edit(&mut self) {
         if self.busy {
             return;

@@ -1,6 +1,8 @@
 use crate::error::AppError;
 use std::path::{Path, PathBuf};
 
+/// Escolhe override absoluto, XDG absoluto ou HOME absoluto, nessa ordem.
+/// Override relativo é erro; XDG relativo é ignorado e ausência de caminho válido falha.
 pub fn resolve_data_dir(
     override_dir: Option<&Path>,
     xdg: Option<&Path>,
