@@ -82,3 +82,20 @@ não impede o build da toolchain fixada. Não foi aplicado patch amplo.
 RED: seis falhas no domínio e três na resolução, antes das regras. Testes usam
 argumentos, sem modificar HOME/XDG globais. Perfil release reutiliza o build
 inicial; o gate final também executará o comando padrão do plano.
+
+
+## Incremento 3 — armazenamento durável
+
+Nove testes de integração e um de rollback com trigger passaram em release,
+após falhas observadas antes da implementação. Cobrem CRUD/reabertura, ordem,
+IDs não reutilizados, duplicatas independentes, banco corrompido preservado byte
+a byte, versão futura, schema estranho, registros inválidos, lock vivo/drop e
+NotFound. Trigger SQLite abortando UPDATE mantém snapshot inclusive na reabertura.
+
+Dados: RUST_GPUI_DATA_DIR absoluto, senão XDG_DATA_HOME absoluto + rust-gpui,
+senão HOME absoluto + .local/share/rust-gpui. Arquivos tasks.sqlite3 e app.lock.
+Lock do SO mantido vivo, não removido ao sair. Schema 1, quick_check, SQL da
+tabela normalizado, registros validados, DELETE journal/FULL/250ms. Cada ação
+retorna o snapshot só depois do commit; erros fazem rollback e são propagados.
+O banco inválido é preservado; recuperação exige corrigir caminho/permissões ou
+tratar cópia do arquivo externamente. Não há reset ou backup automático.

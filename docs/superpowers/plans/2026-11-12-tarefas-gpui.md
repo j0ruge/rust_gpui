@@ -215,24 +215,24 @@ assert!(TaskTitle::parse(&"é".repeat(201)).is_err());
 testes privados de falha dentro de src/storage.rs.
 **Interfaces:** consome domínio/config; produz TaskCommand e TaskRepository.
 
-- [ ] Escrever teste com `tempfile::tempdir`: open → Create → Rename → SetStatus
+- [x] Escrever teste com `tempfile::tempdir`: open → Create → Rename → SetStatus
   → drop → reopen → conferir ID/título/estado/ordem → Delete → reopen → ausente.
   Criar duas tarefas de mesmo título e comprovar alteração só no ID escolhido.
-- [ ] Testar schema incompatível, bytes que não são SQLite, registro inválido e
+- [x] Testar schema incompatível, bytes que não são SQLite, registro inválido e
   banco com tabelas estranhas/schema zero. Recusar sem apagar/resetar; comparar
   bytes do fixture corrompido antes/depois. Novo banco vazio é inicializado uma vez.
-- [ ] Testar lock: segundo open no mesmo diretório falha; outro diretório passa;
+- [x] Testar lock: segundo open no mesmo diretório falha; outro diretório passa;
   após drop pode reabrir mesmo com app.lock ainda existente. Não testar por PID
   escrito em arquivo nem remover arquivo para liberar.
-- [ ] Testar transação/rollback: após duas tarefas confirmadas, adicionar trigger
+- [x] Testar transação/rollback: após duas tarefas confirmadas, adicionar trigger
   SQLite temporário de teste que aborte UPDATE; tentativa de rename deve falhar
   e a leitura/reabertura preservar título/estado anteriores. Testar `NotFound`
   sem criar linha e erro de diretório que é arquivo. Testes privados podem acessar
   a Connection, sem adicionar API de debug ao produto.
-- [ ] Rodar `cargo test --locked --test persistence` e testes internos afetados;
+- [x] Rodar `cargo test --locked --test persistence` e testes internos afetados;
   observar falhas, implementar schema/lock/transactions conforme spec e repetir.
   Manter File do lock vivo; usar SQL parametrizado e mapear registro via domínio.
-- [ ] Atualizar docs/stack com caminho e política de recuperação; commit.
+- [x] Atualizar docs/stack com caminho e política de recuperação; commit.
 
 ## Tarefa 4 — Estado de UI resistente a falhas
 

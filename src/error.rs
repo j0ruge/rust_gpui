@@ -10,7 +10,7 @@ pub enum AppError {
     #[error("Não foi possível acessar os arquivos locais.")]
     Io(#[from] std::io::Error),
     #[error("O banco de tarefas é inválido. O arquivo foi preservado.")]
-    InvalidDatabase,
+    InvalidDatabase(#[source] Option<rusqlite::Error>),
     #[error("Esta versão do banco não é compatível com o aplicativo.")]
     IncompatibleVersion,
     #[error("O aplicativo já está aberto para estes dados.")]

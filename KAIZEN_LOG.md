@@ -102,3 +102,11 @@ respectivas; a revisão final com goal ocorre após outro clear, conforme pedido
 - Plan/Do: tipos de valor e filtros, resolver caminhos por argumentos.
 - Check: RED comportamental seguido de dez testes verdes em release.
 - Act: regras e mapeamento pt-BR/inglês preservados sem camadas adicionais.
+
+
+## 2026-11-12 — Incremento 3: prevenir perda e falsa confirmação
+
+- Plan/Do: SQLite transacional, schema/registro verificados e lock do SO.
+- Check: dez testes reais com diretórios temporários; rollback por trigger,
+  bytes corrompidos preservados e reabertura após drop. Suíte release verde.
+- Act: padronizar snapshot somente após commit; erro explícito sem reset do banco.
